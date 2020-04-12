@@ -1,0 +1,22 @@
+stages:
+  - containerization
+  - deployment
+
+variables:
+  APPLICATION_NAME: user-manager-front
+  CONTAINER_REGISTRY: 192.168.1.2:5000
+
+containerization:
+  stage: containerization
+  script:
+    - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
+    - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+
+deployment:
+  stage: deployment
+  script:
+    - export CONTAINER_REGISTRY=${CONTAINER_REGISTRY}
+    - envsubst < deployment.yml | kubectl apply -f -
+    - kubectl rollout restart deployment/${APPLICATION_NAME}
+  environment:
+    name: staging

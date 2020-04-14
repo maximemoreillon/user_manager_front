@@ -15,7 +15,6 @@ containerization:
 deployment:
   stage: deployment
   script:
-    - export CONTAINER_REGISTRY=${CONTAINER_REGISTRY}
     - envsubst < deployment.yml | kubectl apply -f -
     - kubectl rollout restart deployment/${APPLICATION_NAME}
   environment:

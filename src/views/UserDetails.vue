@@ -51,8 +51,8 @@ export default {
   },
   methods: {
     get_user_details(){
-      this.axios.post(`${process.env.VUE_APP_API_URL}/get_user`, {
-        user_id: this.$route.query.id
+      this.axios.get(`${process.env.VUE_APP_USERS_API_URL}/user`, {
+        params: {user_id: this.$route.query.id}
       })
       .then(response => {
         this.user = response.data
@@ -63,7 +63,7 @@ export default {
 
     delete_user(){
       if(confirm('really?')){
-        this.axios.post(`${process.env.VUE_APP_API_URL}/delete_user`, {
+        this.axios.post(`${process.env.VUE_APP_USERS_API_URL}/delete_user`, {
           user_id: this.$route.query.id
         })
         .then(response => {

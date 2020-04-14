@@ -36,7 +36,7 @@ export default {
   methods: {
     create_user(){
       if(this.password_confirm === this.user.properties.password_plain){
-        this.axios.post(`${process.env.VUE_APP_API_URL}/create_user`, {
+        this.axios.post(`${process.env.VUE_APP_USERS_API_URL}/create_user`, {
           user: this.user
         })
         .then(response => {

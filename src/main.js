@@ -13,7 +13,6 @@ Vue.use(VueAxios, axios)
 router.beforeEach((to, from, next) => {
 
   if(Vue.$cookies.get("jwt")) {
-    console.log('I haz cookie')
     axios.defaults.headers.common['Authorization'] = `Bearer ${Vue.$cookies.get('jwt')}`
     next();
   }

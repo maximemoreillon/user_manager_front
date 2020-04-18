@@ -10,9 +10,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
-//import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
   name: 'CreateUser',
   components: {
@@ -36,7 +33,7 @@ export default {
   methods: {
     create_user(){
       if(this.password_confirm === this.user.properties.password_plain){
-        this.axios.post(`${process.env.VUE_APP_USERS_API_URL}/create_user`, {
+        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/create_user`, {
           user: this.user
         })
         .then(response => {

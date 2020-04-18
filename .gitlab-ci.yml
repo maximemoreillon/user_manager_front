@@ -4,13 +4,20 @@ stages:
 
 variables:
   APPLICATION_NAME: user-manager-front
-  CONTAINER_REGISTRY: 192.168.1.2:5000
+  DOCKER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
 
 containerization:
   stage: containerization
   script:
-    - docker build -t ${CONTAINER_REGISTRY}/${APPLICATION_NAME} .
-    - docker push ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+    - cp ${ENV} ./.env.production
+    - >
+      docker build
+      --build-arg HTTP_PROXY=$HTTP_PROXY
+      --build-arg HTTPS_PROXY=$HTTPS_PROXY
+      -t ${DOCKER_IMAGE}
+      .
+    - docker push ${DOCKER_IMAGE}
+    - docker image rm ${DOCKER_IMAGE} # Cleanup
 
 deployment:
   stage: deployment
@@ -18,4 +25,6 @@ deployment:
     - envsubst < deployment.yml | kubectl apply -f -
     - kubectl rollout restart deployment/${APPLICATION_NAME}
   environment:
-    name: staging
+    name: production
+    kubernetes:
+      namespace: ${KUBERNETES_NAMESPACE}

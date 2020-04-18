@@ -28,7 +28,7 @@ export default {
   },
   methods: {
     get_user_list(){
-      this.axios.get(`${process.env.VUE_APP_USERS_API_URL}/all_users`)
+      this.axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/all_users`)
       .then(response => {
         this.users.splice(0, this.users.length)
         response.data.forEach((record) => {

@@ -10,15 +10,25 @@ variables:
 containerization:
   stage: containerization
   script:
+    # If docker registry password provided, attempt login
+    - >
+      if [ -z ${CONTAINER_REGISTRY_PASSWORD} ];
+      then echo "CONTAINER_REGISTRY_PASSWORD not set, skipping login";
+      else echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login ${CONTAINER_REGISTRY} --username ${CONTAINER_REGISTRY_USERNAME} --password-stdin;
+      fi
+    # Copy environment variables from gitlab
     - cp ${ENV} ./.env.production
+    # Building the container image
     - >
       docker build
       --build-arg HTTP_PROXY=$HTTP_PROXY
       --build-arg HTTPS_PROXY=$HTTPS_PROXY
       -t ${DOCKER_IMAGE}
       .
+    # Pushing the image to the registry
     - docker push ${DOCKER_IMAGE}
-    - docker image rm ${DOCKER_IMAGE} # Cleanup
+    # Cleanup
+    - docker image rm ${DOCKER_IMAGE}
 
 deployment:
   stage: deployment

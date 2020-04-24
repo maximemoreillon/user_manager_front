@@ -28,7 +28,7 @@ spec:
   - port: 80
   selector:
     app: ${APPLICATION_NAME}
-  type: ClusterIP
+  type: ClusterIP # Cluster IP since no need to map to an external port
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -36,7 +36,7 @@ metadata:
   name: ${APPLICATION_NAME} # Name of the ingress, named after the application
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "letsencrypt-prod" # This is necessary, no idea why
+    cert-manager.io/cluster-issuer: "letsencrypt-prod" # connect to the certificate issuer
 spec:
   tls:
   - hosts:

@@ -5,11 +5,19 @@
 
       <template v-slot:navigation>
         <router-link to="/">
-          <span>Home</span>
+          <span>Profile</span>
         </router-link>
-        <router-link to="/create_user">
+
+        <router-link to="/user_list">
+          <span>User list</span>
+        </router-link>
+
+        <router-link
+          to="/create_user"
+          v-if="current_user_is_admin">
           <span>Create user</span>
         </router-link>
+
       </template>
 
     </AppTemplate>
@@ -18,8 +26,9 @@
 </template>
 
 <script>
-//import AppTemplate from '@/components/vue_application_template/AppTemplate.vue'
+
 import AppTemplate from '@moreillon/vue_application_template'
+import {authentication} from '@/mixins/authentication.js'
 
 
 
@@ -28,7 +37,9 @@ export default {
   components: {
     AppTemplate,
   },
-
+  mixins: [
+    authentication,
+  ],
   data(){
     return {}
   }
@@ -37,5 +48,15 @@ export default {
 
 
 <style>
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+tr:not(:last-child){
+  border-bottom: 1px solid #dddddd;
+}
 
+th, td {
+  padding: 0.25em;
+}
 </style>

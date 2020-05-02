@@ -1,20 +1,32 @@
 <template>
   <div class="create_user">
-    <form class="" v-on:submit.prevent="create_user()">
+    <h1>Create user</h1>
+    <form
+      class=""
+      v-if="current_user_is_admin"
+      v-on:submit.prevent="create_user()">
       <input type="text" v-model="user.properties.username" placeholder="username">
       <input type="password" v-model="user.properties.password_plain" placeholder="password">
       <input type="password" v-model="password_confirm" placeholder="password confirm">
       <input type="submit">
     </form>
+    <div class="">
+      Unaothorized
+    </div>
   </div>
 </template>
 
 <script>
+import {authentication} from '@/mixins/authentication.js'
+
 export default {
   name: 'CreateUser',
   components: {
 
   },
+  mixins: [
+    authentication,
+  ],
   data(){
     return {
       user: {
@@ -54,5 +66,6 @@ export default {
 form {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 </style>

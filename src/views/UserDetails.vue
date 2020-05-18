@@ -81,6 +81,15 @@
           </td>
         </tr>
 
+        <template v-if="user_is_current_user(user)">
+          <tr>
+            <td>User token</td>
+            <td>
+              {{this.$cookies.get('jwt')}}
+            </td>
+          </tr>
+        </template>
+
         <template v-if="current_user_is_admin">
           <!-- Cannot delete oneself -->
           <tr

@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import UserList from '../views/UserList.vue'
 
 Vue.use(VueRouter)
 
@@ -13,7 +12,7 @@ const routes = [
   {
     path: '/user_list',
     name: 'user_list',
-    component: UserList
+    component: () => import('../views/UserList.vue')
   },
   {
     path: '/create_user',

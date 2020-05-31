@@ -162,7 +162,7 @@ export default {
     update_avatar(){
       let avatar_src = prompt('Avatar URL')
       if(avatar_src) {
-        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/update_avatar`, {
+        this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/avatar`, {
           user_id: this.user.identity.low,
           avatar_src: avatar_src,
         })

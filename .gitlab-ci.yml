@@ -16,6 +16,8 @@ containerization:
       then echo "CONTAINER_REGISTRY_PASSWORD not set, skipping login";
       else echo "${CONTAINER_REGISTRY_PASSWORD}" | docker login ${CONTAINER_REGISTRY} --username ${CONTAINER_REGISTRY_USERNAME} --password-stdin;
       fi
+    # Copy environment variables from gitlab
+    - cp ${ENV} ./.env.production
     # Building the container image
     - docker build -t ${DOCKER_IMAGE} .
     # Pushing the image to the registry

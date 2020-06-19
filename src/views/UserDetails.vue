@@ -35,9 +35,22 @@
         </tr>
 
         <tr>
+          <td>E-mail address</td>
+          <td>
+            <span>{{user.properties.email_address}}</span>
+
+            <button
+              type="button"
+              v-on:click="update_email_address()">
+              Update
+            </button>
+          </td>
+        </tr>
+
+        <tr>
           <td>First name</td>
           <td>
-            {{user.properties.first_name}}
+            <span>{{user.properties.first_name}}</span>
             <button
               type="button"
               v-on:click="update_first_name()">
@@ -49,7 +62,7 @@
         <tr>
           <td>Last name</td>
           <td>
-            {{user.properties.last_name}}
+            <span>{{user.properties.last_name}}</span>
             <button
               type="button"
               v-on:click="update_last_name()">
@@ -61,7 +74,8 @@
         <tr>
           <td>Display name</td>
           <td>
-            {{user.properties.display_name}}
+            <span>{{user.properties.display_name}}</span>
+
             <button
               type="button"
               v-on:click="update_display_name()">
@@ -85,7 +99,7 @@
           <tr>
             <td>User token</td>
             <td>
-              {{this.$cookies.get('jwt')}}
+              <input type="text" :value="$cookies.get('jwt')" readonly>
             </td>
           </tr>
         </template>
@@ -146,7 +160,7 @@ export default {
     },
 
     update_admin_rights(){
-      this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/update_administrator_rights`, {
+      this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/administrator_rights`, {
         user_id: this.user.identity.low,
         isAdmin: this.user.properties.isAdmin,
       })
@@ -180,7 +194,7 @@ export default {
     update_display_name(){
       let display_name = prompt('display_name')
       if(display_name) {
-        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/update_display_name`, {
+        this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/display_name`, {
           user_id: this.user.identity.low,
           display_name: display_name,
         })
@@ -198,7 +212,7 @@ export default {
     update_first_name(){
       let first_name = prompt('first_name')
       if(first_name) {
-        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/update_first_name`, {
+        this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/first_name`, {
           user_id: this.user.identity.low,
           first_name: first_name,
         })
@@ -216,7 +230,7 @@ export default {
     update_last_name(){
       let last_name = prompt('last_name')
       if(last_name) {
-        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/update_last_name`, {
+        this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/last_name`, {
           user_id: this.user.identity.low,
           last_name: last_name,
         })
@@ -231,10 +245,28 @@ export default {
       }
     },
 
+    update_email_address(){
+      let email_address = prompt('New email address')
+      if(email_address) {
+        this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/email_address`, {
+          user_id: this.user.identity.low,
+          email_address: email_address,
+        })
+        .then(() => {
+          this.get_user_details()
+        })
+        .catch(error => {
+          if(error.response) console.log(error.response.data)
+          else console.log(error)
+          alert(error)
+        })
+      }
+    },
+
     delete_user(){
       if(confirm('really?')){
-        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/delete_user`, {
-          user_id: this.user.identity.low
+        this.axios.delete(`${process.env.VUE_APP_USER_MANAGER_API_URL}/user`, {
+          params: {user_id: this.user.identity.low}
         })
         .then( () => {
           this.$router.push({name: 'user_list'})

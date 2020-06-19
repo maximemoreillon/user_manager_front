@@ -1,6 +1,7 @@
 <template>
   <div class="create_user">
     <h1>Create user</h1>
+
     <form
       class=""
       v-if="current_user_is_admin"
@@ -10,7 +11,9 @@
       <input type="password" v-model="password_confirm" placeholder="password confirm">
       <input type="submit">
     </form>
-    <div class="">
+
+    <!-- If not admin -->
+    <div class="" v-else>
       Unaothorized
     </div>
   </div>
@@ -45,7 +48,7 @@ export default {
   methods: {
     create_user(){
       if(this.password_confirm === this.user.properties.password_plain){
-        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/create_user`, {
+        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/user`, {
           user: this.user
         })
         .then(response => {

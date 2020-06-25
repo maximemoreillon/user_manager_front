@@ -37,63 +37,34 @@
         <tr>
           <td>E-mail address</td>
           <td>
-            <span>{{user.properties.email_address}}</span>
-
-            <button
-              type="button"
-              v-on:click="update_property('email_address')">
-              Update
-            </button>
+            <input type="email" v-model="user.properties.email_address">
           </td>
         </tr>
+
+
 
         <tr>
           <td>First name</td>
           <td>
-            <span>{{user.properties.first_name}}</span>
-            <button
-              type="button"
-              v-on:click="update_property('first_name')">
-              Update
-            </button>
+            <input type="text" v-model="user.properties.first_name">
           </td>
         </tr>
 
         <tr>
           <td>Last name</td>
           <td>
-            <span>{{user.properties.last_name}}</span>
-            <button
-              type="button"
-              v-on:click="update_property('last_name')">
-              Update
-            </button>
+            <input type="text" v-model="user.properties.last_name">
           </td>
         </tr>
 
         <tr>
           <td>Display name</td>
           <td>
-            <span>{{user.properties.display_name}}</span>
-
-            <button
-              type="button"
-              v-on:click="update_property('display_name')">
-              Update
-            </button>
+            <input type="text" v-model="user.properties.display_name">
           </td>
         </tr>
 
-        <tr>
-          <td>Admin</td>
-          <td>
-            <input
-              type="checkbox"
-              v-model="user.properties.isAdmin"
-              v-on:change="update_admin_rights()"
-              v-bind:disabled="!current_user_is_admin || user_is_current_user(user)">
-          </td>
-        </tr>
+
 
         <template v-if="user_is_current_user(user)">
           <tr>
@@ -104,7 +75,29 @@
           </tr>
         </template>
 
+        <tr>
+          <td>Save</td>
+          <td>
+            <button
+              type="button"
+              v-on:click="patch_user()">
+              Save
+            </button>
+          </td>
+        </tr>
+
         <template v-if="current_user_is_admin">
+
+          <tr>
+            <td>Admin</td>
+            <td>
+              <input
+                type="checkbox"
+                v-model="user.properties.isAdmin"
+                v-bind:disabled="!current_user_is_admin || user_is_current_user(user)">
+            </td>
+          </tr>
+
           <!-- Cannot delete oneself -->
           <tr
             v-if="!user_is_current_user(user)">
@@ -150,21 +143,17 @@ export default {
   },
   methods: {
     get_user_details(){
-      this.axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/user`, {
-        params: {user_id: this.$route.query.id}
-      })
+      this.axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.$route.query.id}`)
       .then(response => {
         this.user = response.data
       })
       .catch( error => console.log(error))
     },
 
-    update_admin_rights(){
-      this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/administrator_rights`, {
-        user_id: this.user.identity.low,
-        isAdmin: this.user.properties.isAdmin,
-      })
-      .then(() => {})
+
+    patch_user(){
+      this.axios.patch(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity.low}`, this.user.properties)
+      .then((response) => {console.log(response.data)})
       .catch(error => {
         if(error.response) console.log(error.response.data)
         else console.log(error)
@@ -172,26 +161,6 @@ export default {
         this.get_user_details()
       })
     },
-
-    update_property(key){
-      let value = prompt(`Enter new ${key}:`)
-      if(value) {
-        this.axios.put(`${process.env.VUE_APP_USER_MANAGER_API_URL}/user_property`, {
-          user_id: this.user.identity.low,
-          key: key,
-          value: value,
-        })
-        .then(() => {
-          this.get_user_details()
-        })
-        .catch(error => {
-          if(error.response) console.log(error.response.data)
-          else console.log(error)
-          alert(error)
-        })
-      }
-    },
-
 
 
     delete_user(){

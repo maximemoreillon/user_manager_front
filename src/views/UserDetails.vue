@@ -64,6 +64,16 @@
           </td>
         </tr>
 
+        <tr v-if="current_user_is_admin">
+          <td>Admin</td>
+          <td>
+            <input
+              type="checkbox"
+              v-model="user.properties.isAdmin"
+              v-bind:disabled="!current_user_is_admin || user_is_current_user(user)">
+          </td>
+        </tr>
+
 
 
         <template v-if="user_is_current_user(user)">
@@ -86,29 +96,42 @@
           </td>
         </tr>
 
-        <template v-if="current_user_is_admin">
+        <tr v-if="user_is_current_user(user) || current_user_is_admin">
+          <td>Password update</td>
+          <td>
+            <form class="" @submit.prevent="password_update()">
 
-          <tr>
-            <td>Admin</td>
-            <td>
-              <input
-                type="checkbox"
-                v-model="user.properties.isAdmin"
-                v-bind:disabled="!current_user_is_admin || user_is_current_user(user)">
-            </td>
-          </tr>
+              <div class="">
+                <label>New password: </label>
+                <input type="password" v-model="new_password" placeholder="New password">
+              </div>
 
-          <!-- Cannot delete oneself -->
-          <tr
-            v-if="!user_is_current_user(user)">
-            <td>Delete</td>
-            <td>
-              <button type="button" v-on:click="delete_user()">
-                Delete user
-              </button>
-            </td>
-          </tr>
-        </template>
+              <div class="">
+                <label>Password confirm: </label>
+                <input type="password" v-model="new_password_confirm" placeholder="New password confirm">
+              </div>
+
+              <div class="">
+                <input type="submit">
+              </div>
+
+            </form>
+          </td>
+        </tr>
+
+
+
+
+        <!-- Cannot delete oneself -->
+        <tr
+          v-if="!user_is_current_user(user) && current_user_is_admin">
+          <td>Delete</td>
+          <td>
+            <button type="button" v-on:click="delete_user()">
+              Delete user
+            </button>
+          </td>
+        </tr>
 
       </table>
     </template>
@@ -135,15 +158,27 @@ export default {
   ],
   data(){
     return {
-      user: null
+      user: null,
+
+      new_password: '',
+      new_password_confirm: '',
     }
   },
   mounted(){
     this.get_user_details()
   },
+  beforeRouteUpdate (to, from, next) {
+    next()
+    this.$nextTick().then(() => {
+      this.get_user_details()
+    })
+  },
+
   methods: {
     get_user_details(){
-      this.axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.$route.query.id}`)
+      let user_id = this.$route.query.id || 'self'
+      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      this.axios.get(url)
       .then(response => {
         this.user = response.data
       })
@@ -153,7 +188,9 @@ export default {
 
     patch_user(){
       this.axios.patch(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity.low}`, this.user.properties)
-      .then((response) => {console.log(response.data)})
+      .then(() => {
+        alert(`User data updated successfully`)
+      })
       .catch(error => {
         if(error.response) console.log(error.response.data)
         else console.log(error)
@@ -162,20 +199,37 @@ export default {
       })
     },
 
+    password_update(){
+      if(this.new_password !== this.new_password_confirm ) return alert (`Passwords don't match`)
+      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity.low}/password`
+      this.axios.put(url, {new_password: this.new_password})
+      .then( () => {
+        alert(`Password updated successfully`)
+        this.new_password = ''
+        this.new_password_confirm = ''
+      })
+      .catch(error => {
+        if(error.response) console.log(error.response.data)
+        else console.log(error)
+        alert(error)
+        this.get_user_details()
+      })
+    },
 
     delete_user(){
-      if(confirm('really?')){
-        this.axios.delete(`${process.env.VUE_APP_USER_MANAGER_API_URL}/user`, {
-          params: {user_id: this.user.identity.low}
-        })
-        .then( () => {
-          this.$router.push({name: 'user_list'})
-        })
-        .catch( error => {
-          if(error.response) console.log(error.response.data)
-          else console.log(error)
-        })
-      }
+      if(!confirm('really?')) return
+
+      let user_id = this.user.identity.low
+      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      this.axios.delete(url)
+      .then( () => {
+        this.$router.push({name: 'user_list'})
+      })
+      .catch( error => {
+        if(error.response) console.log(error.response.data)
+        else console.log(error)
+      })
+
 
     }
   }

@@ -5,7 +5,7 @@
 
       <template v-slot:navigation>
         <router-link to="/">
-          <span>Profile</span>
+          <span>My profile</span>
         </router-link>
 
         <router-link to="/user_list">

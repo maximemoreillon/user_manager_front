@@ -14,13 +14,11 @@ spec:
     spec:
       containers:
       - name: ${APPLICATION_NAME}
-        image: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
+        image: ${DOCKER_IMAGE}
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-        env:
-        - name: DEMO_GREETING
-          value: "Hello from the environment"
+        # Get environment variables from secret
         envFrom:
         - secretRef:
            name: environment-variables

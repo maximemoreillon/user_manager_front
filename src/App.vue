@@ -21,8 +21,7 @@
         </router-link>
 
         <router-link
-          to="/about"
-          v-if="current_user_is_admin">
+          to="/about">
           <span>About</span>
         </router-link>
 

@@ -1,24 +1,11 @@
-# user_manager_front
+# User Manager GUI
 
-## Project setup
-```
-npm install
-```
+Front end for the user manager API
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Environment variables
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+| Variable | Description |
+| --- | --- |
+| VUE_APP_USER_MANAGER_API_URL | The URL of user manager API |
+| VUE_APP_AUTHENTICATION_API_URL | The URL of the authentication API |
+| VUE_APP_COOKIE_DOMAIN | Cookie domain (Optional) |

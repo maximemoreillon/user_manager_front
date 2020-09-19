@@ -1,6 +1,6 @@
 {
   "name": "user_manager_front",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -8,27 +8,28 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@moreillon/vue_access_control": "^1.0.0",
+    "@moreillon/vue_access_control": "^1.0.1",
     "@moreillon/vue_application_template": "^0.1.4",
+    "@moreillon/vue_application_template_flex": "^1.1.11",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "dotenv": "^8.2.0",
-    "vue": "^2.6.11",
+    "vue": "^2.6.12",
     "vue-axios": "^2.1.5",
-    "vue-cookies": "^1.7.0",
-    "vue-material-design-icons": "^4.5.0",
-    "vue-router": "^3.1.5",
-    "vuex": "^3.1.2"
+    "vue-cookies": "^1.7.4",
+    "vue-material-design-icons": "^4.9.0",
+    "vue-router": "^3.4.3",
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^4.3.1",
-    "@vue/cli-plugin-eslint": "^4.3.1",
-    "@vue/cli-plugin-router": "^4.3.1",
-    "@vue/cli-plugin-vuex": "^4.3.1",
-    "@vue/cli-service": "^4.3.1",
+    "@vue/cli-plugin-babel": "^4.5.6",
+    "@vue/cli-plugin-eslint": "^4.5.6",
+    "@vue/cli-plugin-router": "^4.5.6",
+    "@vue/cli-plugin-vuex": "^4.5.6",
+    "@vue/cli-service": "^4.5.6",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.1.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.12"
   }
 }

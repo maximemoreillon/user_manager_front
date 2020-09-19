@@ -8,17 +8,9 @@
     <template v-if="user">
       <div class="avatar_wrapper">
         <img class="avatar" :src="avatar_src" alt="">
-
-        <div class="">
-          <button
-            type="button"
-            v-if="user_is_current_user(user)"
-            v-on:click="update_property('avatar_src')">
-            Update avatar
-          </button>
-        </div>
-
       </div>
+
+      <h2>User properties</h2>
 
       <table
         class="user_details_table"
@@ -30,7 +22,7 @@
         </tr>
 
         <tr>
-          <td>ID</td>
+          <td>User ID</td>
           <td>{{user.identity.low}}</td>
         </tr>
 
@@ -65,13 +57,24 @@
         </tr>
 
         <tr v-if="current_user_is_admin">
-          <td>Admin</td>
+          <td>Administrator</td>
           <td>
             <input
               type="checkbox"
               v-model="user.properties.isAdmin"
               v-bind:disabled="!current_user_is_admin || user_is_current_user(user)">
+              <span v-if="current_user_is_admin && user_is_current_user(user)">
+                Cannot remove one's own admin rights
+              </span>
           </td>
+        </tr>
+
+        <tr v-if="current_user_is_admin">
+          <td>Last login</td>
+          <td v-if="user.properties.last_login">
+            {{format_date_neo4j(user.properties.last_login)}}
+          </td>
+          <td v-else>Never</td>
         </tr>
 
 
@@ -96,44 +99,73 @@
           </td>
         </tr>
 
-        <tr v-if="user_is_current_user(user) || current_user_is_admin">
-          <td>Password update</td>
-          <td>
-            <form class="" @submit.prevent="password_update()">
-
-              <div class="">
-                <label>New password: </label>
-                <input type="password" v-model="new_password" placeholder="New password">
-              </div>
-
-              <div class="">
-                <label>Password confirm: </label>
-                <input type="password" v-model="new_password_confirm" placeholder="New password confirm">
-              </div>
-
-              <div class="">
-                <input type="submit">
-              </div>
-
-            </form>
-          </td>
-        </tr>
-
-
-
-
-        <!-- Cannot delete oneself -->
+        <!-- Delete user -->
         <tr
-          v-if="!user_is_current_user(user) && current_user_is_admin">
-          <td>Delete</td>
+          v-if="current_user_is_admin">
+          <td>Delete user</td>
           <td>
-            <button type="button" v-on:click="delete_user()">
+            <button
+              type="button"
+              v-on:click="delete_user()"
+              :disabled="user_is_current_user(user)">
               Delete user
             </button>
           </td>
         </tr>
 
       </table>
+
+      <template v-if="user_is_current_user(user) || current_user_is_admin">
+        <h2>Password update</h2>
+        <form class="" @submit.prevent="password_update()">
+        <table>
+          <tr v-if="!current_user_is_admin">
+            <td>Current password</td>
+            <td>
+              <input
+                type="password"
+                v-model="current_password"
+                placeholder="Current password">
+            </td>
+          <tr>
+            <td>New password</td>
+            <td>
+              <input type="password" v-model="new_password" placeholder="New password">
+            </td>
+          </tr>
+          <tr>
+            <td>Password confirm</td>
+            <td>
+              <input type="password" v-model="new_password_confirm" placeholder="New password confirm">
+            </td>
+          </tr>
+          <tr>
+            <td>Submit</td>
+            <td>
+              <div
+                class="error"
+                v-if="password_too_short">
+                Password too short (min 6 characters)
+              </div>
+              <div
+                class="error"
+                v-if="passwords_mismatch">
+                Password mismatch
+              </div>
+              <div class="">
+                <input
+                  type="submit"
+                  value="Password update"
+                  :disabled="password_invalid">
+              </div>
+
+            </td>
+          </tr>
+
+        </table>
+        </form>
+      </template>
+
     </template>
 
 
@@ -160,6 +192,7 @@ export default {
     return {
       user: null,
 
+      current_password: '',
       new_password: '',
       new_password_confirm: '',
     }
@@ -176,7 +209,11 @@ export default {
 
   methods: {
     get_user_details(){
-      let user_id = this.$route.query.id || 'self'
+      let user_id = this.$route.params.user_id
+        || this.$route.params.id
+        || this.$route.query.id
+        || 'self'
+
       let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
       this.axios.get(url)
       .then(response => {
@@ -200,20 +237,37 @@ export default {
     },
 
     password_update(){
-      if(this.new_password !== this.new_password_confirm ) return alert (`Passwords don't match`)
+      if(this.password_invalid) return alert ('Invalid new password')
+
       let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity.low}/password`
-      this.axios.put(url, {new_password: this.new_password})
+
+      this.axios.put(url, {
+        new_password: this.new_password,
+        new_password_confirm: this.new_password_confirm,
+        current_password: this.current_password
+      })
       .then( () => {
-        alert(`Password updated successfully`)
+        // clear inputs
+
         this.new_password = ''
         this.new_password_confirm = ''
+        this.current_password = ''
+
+        // Inform user
+        alert('Password updated successfully')
       })
       .catch(error => {
-        if(error.response) console.log(error.response.data)
-        else console.log(error)
-        alert(error)
-        this.get_user_details()
+
+        if(error.response) {
+          console.log(error.response.data)
+          alert(`Error updating password: ${error.response.data}`)
+        }
+        else {
+          alert(`Error updating password`)
+          console.log(error)
+        }
       })
+
     },
 
     delete_user(){
@@ -230,7 +284,23 @@ export default {
         else console.log(error)
       })
 
-
+    },
+    format_date_neo4j(date){
+      let year = date.year.low
+      let month = date.month.low
+      let day = date.day.low
+      return `${year}/${month}/${day}`
+    },
+  },
+  computed: {
+    passwords_mismatch(){
+      return this.new_password != this.new_password_confirm
+    },
+    password_too_short() {
+      return this.new_password.length < 6
+    },
+    password_invalid() {
+      return this.password_too_short || this.passwords_mismatch
     }
   }
 }
@@ -238,9 +308,7 @@ export default {
 
 <style scoped>
 
-td:first-child{
-  font-weight: bold;
-}
+
 
 .avatar_wrapper {
   text-align: center;

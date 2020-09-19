@@ -1,7 +1,7 @@
 <template>
   <div
     class="user_preview"
-    v-on:click="$router.push({name: 'user_details', query: {id: user.identity.low}})">
+    v-on:click="$router.push({name: 'user_details', params: {user_id: user.identity.low}})">
 
     <img class="avatar" :src="avatar_src" >
 

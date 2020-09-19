@@ -6,15 +6,43 @@
       class=""
       v-if="current_user_is_admin"
       v-on:submit.prevent="create_user()">
-      <input type="text" v-model="user.properties.username" placeholder="username">
-      <input type="password" v-model="user.properties.password_plain" placeholder="password">
-      <input type="password" v-model="password_confirm" placeholder="password confirm">
-      <input type="submit">
+
+      <table>
+        <tr>
+          <td>Username</td>
+          <td>
+            <input type="text" v-model="user.properties.username" placeholder="username">
+          </td>
+        </tr>
+        <tr>
+          <td>Password</td>
+          <td>
+            <input type="password" v-model="user.properties.password_plain" placeholder="password">
+          </td>
+        </tr>
+        <tr>
+          <td>Password confirm</td>
+          <td><input type="password" v-model="password_confirm" placeholder="password confirm"></td>
+        </tr>
+        <tr>
+          <td>Submit</td>
+          <td>
+            <input type="submit">
+          </td>
+
+        </tr>
+      </table>
+
+
+
+
+
+
     </form>
 
     <!-- If not admin -->
     <div class="" v-else>
-      Unaothorized
+      Unauthorized
     </div>
   </div>
 </template>

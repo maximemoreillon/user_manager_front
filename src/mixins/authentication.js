@@ -3,8 +3,7 @@ export const authentication = {
     user_is_current_user(user){
       if(!user) return false
       if(!this.$store.state.current_user) return false
-      // using strinigy for robusntess agains disableLossLess Integers
-      return JSON.stringify(this.$store.state.current_user.identity.low) === JSON.stringify(user.identity.low)
+      return this.$store.state.current_user.identity.low === user.identity
     }
   },
   computed: {

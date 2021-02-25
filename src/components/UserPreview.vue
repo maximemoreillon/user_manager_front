@@ -33,8 +33,7 @@ export default {
         || properties.name_kanji
     },
     user_id(){
-      return this.user.identity.low
-        || this.user.identity
+      return this.user.identity
     }
   }
 }

@@ -23,7 +23,7 @@
 
         <tr>
           <td>User ID</td>
-          <td>{{user.identity.low || user.identity.low}}</td>
+          <td>{{user.identity}}</td>
         </tr>
 
         <tr>
@@ -248,8 +248,7 @@ export default {
 
     patch_user(){
 
-      const user_id = this.user.identity.low || this.user.identity
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity}`
       const body = this.modified_properties
 
       this.axios.patch(url, body)
@@ -267,8 +266,7 @@ export default {
     password_update(){
       if(this.password_invalid) return alert ('Invalid new password')
 
-      const user_id = this.user.identity.low || this.user.identity
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}/password`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity}/password`
 
       this.axios.put(url, {
         new_password: this.new_password,
@@ -302,8 +300,7 @@ export default {
     delete_user(){
       if(!confirm('really?')) return
 
-      const user_id = this.user.identity.low || this.user.identity
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity}`
       this.axios.delete(url)
       .then( () => {
         this.$router.push({name: 'user_list'})
@@ -316,7 +313,7 @@ export default {
     },
     format_date_neo4j(date){
       const {year,month,day} = date
-      return `${year.low || year}/${month.low || month}/${day.low || day}`
+      return `${year}/${month}/${day}`
     },
 
     isObject(object) {

@@ -3,7 +3,8 @@ export const authentication = {
     user_is_current_user(user){
       if(!user) return false
       if(!this.$store.state.current_user) return false
-      else return this.$store.state.current_user.identity.low === user.identity.low
+      // using strinigy for robusntess agains disableLossLess Integers
+      return JSON.stringify(this.$store.state.current_user.identity.low) === JSON.stringify(user.identity.low)
     }
   },
   computed: {
@@ -11,6 +12,10 @@ export const authentication = {
       if(!this.$store.state.current_user) return false
       else return this.$store.state.current_user.properties.isAdmin
     },
+    current_user_id(){
+      return this.$store.state.current_user.identity.low
+        || this.$store.state.current_user.identity
+    }
 
   }
 };

@@ -23,7 +23,7 @@
 
         <tr>
           <td>User ID</td>
-          <td>{{user.identity.low}}</td>
+          <td>{{user.identity.low || user.identity.low}}</td>
         </tr>
 
         <tr>
@@ -93,6 +93,7 @@
           <td>
             <button
               type="button"
+              :disabled="!properties_modified"
               v-on:click="patch_user()">
               Save
             </button>
@@ -118,6 +119,14 @@
       <template v-if="user_is_current_user(user) || current_user_is_admin">
         <h2>Password update</h2>
         <form class="" @submit.prevent="password_update()">
+
+        <input
+          class="username_accessibility_input"
+          type="text"
+          autocomplete="username"
+          placeholder="username"
+          :value="user.properties.username">
+
         <table>
           <tr v-if="!current_user_is_admin">
             <td>Current password</td>
@@ -130,13 +139,21 @@
           <tr>
             <td>New password</td>
             <td>
-              <input type="password" v-model="new_password" placeholder="New password">
+              <input
+                type="password"
+                v-model="new_password"
+                placeholder="New password"
+                autocomplete="new-password">
             </td>
           </tr>
           <tr>
             <td>Password confirm</td>
             <td>
-              <input type="password" v-model="new_password_confirm" placeholder="New password confirm">
+              <input
+                type="password"
+                v-model="new_password_confirm"
+                placeholder="New password confirm"
+                autocomplete="new-password-confirm">
             </td>
           </tr>
           <tr>
@@ -168,8 +185,6 @@
 
     </template>
 
-
-
   </div>
 </template>
 
@@ -191,6 +206,7 @@ export default {
   data(){
     return {
       user: null,
+      unmodified_user_copy: null,
 
       current_password: '',
       new_password: '',
@@ -208,23 +224,35 @@ export default {
   },
 
   methods: {
+    save_copy_of_user(){
+      this.unmodified_user_copy = JSON.parse(JSON.stringify(this.user))
+    },
     get_user_details(){
-      let user_id = this.$route.params.user_id
+      const user_id = this.$route.params.user_id
         || this.$route.params.id
         || this.$route.query.id
         || 'self'
 
-      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
       this.axios.get(url)
       .then(response => {
         this.user = response.data
+        // passwords should not be messed with
+        delete this.user.properties.password_hashed
+
+        this.save_copy_of_user()
       })
       .catch( error => console.log(error))
     },
 
 
     patch_user(){
-      this.axios.patch(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity.low}`, this.user.properties)
+
+      const user_id = this.user.identity.low || this.user.identity
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      const body = this.modified_properties
+
+      this.axios.patch(url, body)
       .then(() => {
         alert(`User data updated successfully`)
       })
@@ -239,7 +267,8 @@ export default {
     password_update(){
       if(this.password_invalid) return alert ('Invalid new password')
 
-      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity.low}/password`
+      const user_id = this.user.identity.low || this.user.identity
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}/password`
 
       this.axios.put(url, {
         new_password: this.new_password,
@@ -273,8 +302,8 @@ export default {
     delete_user(){
       if(!confirm('really?')) return
 
-      let user_id = this.user.identity.low
-      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      const user_id = this.user.identity.low || this.user.identity
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
       this.axios.delete(url)
       .then( () => {
         this.$router.push({name: 'user_list'})
@@ -286,11 +315,14 @@ export default {
 
     },
     format_date_neo4j(date){
-      let year = date.year.low
-      let month = date.month.low
-      let day = date.day.low
-      return `${year}/${month}/${day}`
+      const {year,month,day} = date
+      return `${year.low || year}/${month.low || month}/${day.low || day}`
     },
+
+    isObject(object) {
+      return object != null && typeof object === 'object';
+    },
+
   },
   computed: {
     passwords_mismatch(){
@@ -301,6 +333,31 @@ export default {
     },
     password_invalid() {
       return this.password_too_short || this.passwords_mismatch
+    },
+    modified_properties(){
+      // Note: Neo4J does not have nested properties
+      const unmodified_user_keys = Object.keys(this.unmodified_user_copy.properties)
+      //const current_keys = Object.keys(this.user.properties)
+
+      let modified_properties = {}
+      unmodified_user_keys.forEach((key) => {
+        const original_value = this.unmodified_user_copy.properties[key]
+
+        // Only deal with non-nested stuff
+        if(this.isObject(original_value)) return
+
+        const current_value = this.user.properties[key]
+
+        // If there is a modification, add it to an object of modified properties
+        if(original_value !== current_value) {
+          modified_properties[key] = current_value
+        }
+      })
+
+      return modified_properties
+    },
+    properties_modified(){
+      return Object.keys(this.modified_properties).length > 0
     }
   }
 }
@@ -319,5 +376,9 @@ export default {
   width: 200px;
   height: 200px;
   object-fit: contain;
+}
+
+.username_accessibility_input {
+  display: none;
 }
 </style>

@@ -3,8 +3,8 @@
     <h1>User list</h1>
 
     <UserPreview
-      v-for="user in users"
-      v-bind:key="user.identity.low"
+      v-for="(user, index) in users"
+      v-bind:key="`user_${index}`"
       v-bind:user="user"/>
 
 
@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     get_user_list(){
-      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
       this.axios.get(url)
       .then(response => {
         this.users.splice(0, this.users.length)

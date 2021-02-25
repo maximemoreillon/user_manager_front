@@ -1,13 +1,11 @@
 <template>
   <div
     class="user_preview"
-    v-on:click="$router.push({name: 'user_details', params: {user_id: user.identity.low}})">
+    v-on:click="$router.push({name: 'user_details', params: {user_id}})">
 
     <img class="avatar" :src="avatar_src" >
 
-    <div class="username">
-      {{user.properties.username}}
-    </div>
+    <div class="username">{{user_displayed_name}}</div>
 
 
   </div>
@@ -25,6 +23,20 @@ export default {
   mixins: [
     avatar_src,
   ],
+  computed: {
+    user_displayed_name(){
+      const {properties} = this.user
+      return properties.username
+        || properties.display_name
+        || properties.name
+        || properties.full_name
+        || properties.name_kanji
+    },
+    user_id(){
+      return this.user.identity.low
+        || this.user.identity
+    }
+  }
 }
 </script>
 

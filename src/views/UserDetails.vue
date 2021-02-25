@@ -55,6 +55,14 @@
             <input type="text" v-model="user.properties.display_name">
           </td>
         </tr>
+        <tr>
+          <td>Avatar</td>
+          <td>
+            <input
+              type="file"
+              v-on:change="file_upload($event)">
+          </td>
+        </tr>
 
         <tr v-if="current_user_is_admin">
           <td>Administrator</td>
@@ -99,6 +107,7 @@
             </button>
           </td>
         </tr>
+
 
         <!-- Delete user -->
         <tr
@@ -319,6 +328,31 @@ export default {
     isObject(object) {
       return object != null && typeof object === 'object';
     },
+
+    file_upload (event) {
+
+      let formData = new FormData()
+      formData.append('image', event.target.files[0])
+      const url = `${process.env.VUE_APP_IMAGE_MANAGER_API_URL}/image`
+      const options = {
+        headers: {'Content-Type': 'multipart/form-data' }
+      }
+      this.axios.post(url, formData, options)
+      .then(response => {
+        const image_id = response.data._id
+        const src = `${process.env.VUE_APP_IMAGE_MANAGER_API_URL}/images/${image_id}`
+        this.user.properties.avatar_src = src
+
+      })
+      .catch(error => {
+
+        if(error.response) console.error(error.response.data)
+        else console.error(error)
+
+        alert(`Upload failed`)
+      })
+
+    }
 
   },
   computed: {

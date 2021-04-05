@@ -13,7 +13,7 @@
         label="Username"
         :rules="usernameRules"
         required/>
-      
+
       <!--
       <v-text-field
         v-model="user_properties.email_address"
@@ -21,21 +21,21 @@
         label="E-mail"
         required />
       -->
-      
+
       <v-text-field
         v-model="user_properties.password"
         type="password"
         :rules="passwordRules"
         label="Password"
         required />
-      
+
       <v-text-field
         v-model="password_confirm"
         type="password"
         :rules="passwordConfirmRules"
         label="Password confirm"
         required />
-      
+
       <v-btn
         type="submit"
         :disabled="!valid" >
@@ -90,8 +90,9 @@ export default {
       let body = {...this.user_properties}
 
       this.axios.[method](url, body)
-      .then( response => {
-        this.$router.push({name: 'user', params: {user_id: response.data.insertedId}})
+      .then( ({data}) => {
+        console.log(data)
+        this.$router.push({name: 'user', params: {user_id: data._id}})
       })
       .catch( error => {
         console.error(error)

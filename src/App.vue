@@ -1,32 +1,82 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+
+    <v-app-bar
+      app
+      color="primary"
+      dark>
+
+      <v-img
+        alt="Vuetify Logo"
+        class="shrink mr-2 rotating_logo"
+        contain
+        src="@/assets/logo.png"
+        transition="scale-transition"
+        width="40" />
+
+      <v-app-bar-title>User manager</v-app-bar-title>
+
+      <v-spacer />
+
+      <v-btn
+        icon
+        @click="logout()">
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
+
+
+    </v-app-bar>
+
+
+
+
+    <!-- v-container inside main This looks correct -->
+    <!-- v-container is here for padding mainly -->
+    <v-main>
+      <v-container fluid>
+        <router-view/>
+      </v-container>
+    </v-main>
+
+    <v-footer class="text-center">
+      User manager - Maxime Moreillon
+    </v-footer>
+
+  </v-app>
 </template>
 
+<script>
+
+export default {
+  name: 'App',
+
+  data: () => ({
+  }),
+  methods: {
+    logout(){
+
+      delete this.axios.defaults.headers.common['Authorization']
+      this.$cookies.remove('token')
+      this.$router.push({name: 'login'})
+    }
+  },
+  computed: {
+
+  }
+
+};
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+.rotating_logo {
+  animation-name: rotating_logo;
+  animation-duration: 60s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+@keyframes rotating_logo {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
 }
 </style>

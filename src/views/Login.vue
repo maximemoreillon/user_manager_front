@@ -1,9 +1,9 @@
 <template>
   <div class="login">
 
-    
 
-    <v-form 
+
+    <v-form
       @submit.prevent="login()"
       lazy-validation
       v-model="form_valid" >
@@ -12,7 +12,7 @@
         <v-col cols=4>
           <v-text-field
             v-model="username"
-            label="Username" 
+            label="Username"
             :rules="InputRules"/>
         </v-col>
       </v-row>
@@ -26,7 +26,7 @@
         </v-col>
       </v-row>
       <v-row justify="center">
-        <v-col 
+        <v-col
           cols=4
           class="text-center">
           <v-btn
@@ -41,14 +41,14 @@
         </v-col>
       </v-row>
 
-      
 
-      
 
-      
+
+
+
     </v-form>
 
-    <v-snackbar 
+    <v-snackbar
       color="#C00000"
       dark
       v-model="snackbar" >
@@ -94,11 +94,11 @@ export default {
   methods: {
     login(){
       this.processing = true
-      const url = `${process.env.VUE_APP_AUTHENTICATION_API_URL}/login`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/auth/login`
       const body = {username: this.username, password: this.password}
       this.axios.post(url, body)
       .then( ({data: {jwt}}) => {
-        
+
         // Set the authorization headers
         this.axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 
@@ -114,7 +114,7 @@ export default {
         else this.snackbar_text = 'Something went wrong'
         this.snackbar = true
       })
-      .finally(() => {this.processing = false}) 
+      .finally(() => {this.processing = false})
     },
   }
 

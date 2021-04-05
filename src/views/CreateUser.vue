@@ -91,7 +91,6 @@ export default {
 
       this.axios.[method](url, body)
       .then( ({data}) => {
-        console.log(data)
         this.$router.push({name: 'user', params: {user_id: data._id}})
       })
       .catch( error => {

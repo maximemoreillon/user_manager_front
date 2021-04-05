@@ -13,7 +13,13 @@
         src="@/assets/account.svg"
         height="300px"/>
 
-      <v-card-title>{{user.username}}</v-card-title>
+      <v-card-title>
+        {{user.username}}
+      </v-card-title>
+
+      <v-card-subtitle v-if="user_is_current_user">
+        it's you!
+      </v-card-subtitle>
 
       <v-list>
 

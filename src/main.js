@@ -13,11 +13,13 @@ Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 
 
-/*
+
 const identity_check = () => {
 
-  Vue.axios.get(`${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`)
-  .then( ({data}) => { store.commit('set_current_user', data) })
+  Vue.axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`)
+  .then( ({data}) => {
+    store.commit('set_current_user', data)
+   })
   .catch( error => {
     store.commit('set_current_user', null)
     console.error(error)
@@ -40,7 +42,7 @@ router.beforeEach((to, from, next) => {
     else next()
   }
 })
-*/
+
 
 new Vue({
   router,

@@ -1,29 +1,8 @@
-# user_manager_mongoose_front
+# User manager front-end (Mongoose version)
 
-## Project setup
-```
-npm install
-```
+## Environment variables
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+| Variable  | Description |
+| --- | --- |
+| VUE_APP_USER_MANAGER_API_URL | The URL of the back-end (required) |
+| VUE_APP_COOKIE_DOMAIN | Domain for cookies (optional) |

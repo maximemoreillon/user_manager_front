@@ -1,5 +1,4 @@
 <template>
-
 <div>
   <Breadcrumbs />
   <v-card
@@ -79,30 +78,26 @@
       </v-card-actions>
     </template>
 
-    <v-snackbar
-        v-model="snack"
-        color="success">
-        User updated successfully
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            color="primary"
-            text
-            v-bind="attrs"
-            @click="snack = false"
-          >
-            Close
-          </v-btn>
-        </template>
-      </v-snackbar>
-
-
-
   </v-card>
+
+  <v-snackbar
+      v-model="snack"
+      color="success">
+      User updated successfully
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="primary"
+          text
+          v-bind="attrs"
+          @click="snack = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+
 </div>
-
-
-
 </template>
 
 <script>

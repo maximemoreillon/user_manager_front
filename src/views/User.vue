@@ -177,12 +177,12 @@ export default {
       })
     },
     sucess_message(message){
-      this.snack.color = "success"
+      this.snack.color = "#00c000"
       this.snack.text = message
       this.snack.show = true
     },
     error_message(message){
-      this.snack.color = "error"
+      this.snack.color = "#c00000"
       this.snack.text = message
       this.snack.show = true
     }

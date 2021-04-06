@@ -68,6 +68,7 @@
       <v-card-actions>
         <v-btn
           class="mx-2"
+          :disabled="!properties_modified"
           @click="update_user()">
           <v-icon>mdi-content-save</v-icon>
           <span>Save changes</span>
@@ -115,6 +116,7 @@ export default {
     return {
       loading: false,
       user: null,
+      unmodified_user_copy: null,
       snack: {
         show: false,
         color: 'success',
@@ -127,6 +129,9 @@ export default {
     this.get_user()
   },
   methods: {
+    save_copy_of_user(){
+      this.unmodified_user_copy = JSON.parse(JSON.stringify(this.user))
+    },
     get_user(){
       this.loading = true
       let user_id = this.$route.params.user_id || 'self'
@@ -134,6 +139,8 @@ export default {
       this.axios.get(url)
       .then( ({data}) => {
         this.user = data
+        delete this.user.password_hashed
+        this.save_copy_of_user()
        })
       .catch( error => {
         console.error(error)
@@ -159,9 +166,7 @@ export default {
     update_user(){
       const user_id = this.$route.params.user_id || 'self'
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
-      const {display_name, administrator} = this.user
-      const properties = { display_name, administrator }
-      this.axios.patch(url,properties)
+      this.axios.patch(url, this.modified_properties)
       .then( () => {
         this.sucess_message('User updated successfully')
        })
@@ -193,6 +198,33 @@ export default {
       if(!this.$store.state.current_user) return false
       return this.$store.state.current_user.administrator
     },
+    modified_properties(){
+      // Note: Neo4J does not have nested properties
+
+      if(!this.user) return {}
+
+      const current_user_keys = Object.keys(this.user)
+
+      return current_user_keys.reduce( (acc, key) => {
+
+        const current_value = this.user[key]
+        const original_value = this.unmodified_user_copy[key]
+
+        // Only deal with non-nested stuff
+        if(current_value != null && typeof current_value === 'object') return acc
+
+        // If there is a modification, add it to an object of modified properties
+        if(original_value !== current_value) {
+          acc[key] = current_value
+        }
+
+        return acc
+      }, {})
+
+    },
+    properties_modified(){
+      return Object.keys(this.modified_properties).length > 0
+    }
   }
 
 }

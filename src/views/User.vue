@@ -152,6 +152,9 @@ export default {
     },
     update_user(){
 
+      return alert(`Not implemented`)
+      /*
+
       const user_id = this.$route.params.user_id || 'self'
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
 
@@ -171,6 +174,7 @@ export default {
         if(error.response) this.error_message = error.response.data
         else this.error_message = `Error loading user`
       })
+      */
 
     },
   },

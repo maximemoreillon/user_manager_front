@@ -14,17 +14,12 @@ Vue.config.productionTip = false
 
 
 
-const identity_check = () => {
-
-  Vue.axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`)
-  .then( ({data}) => {
-    store.commit('set_current_user', data)
-   })
-  .catch( error => {
-    store.commit('set_current_user', null)
-    console.error(error)
-   })
-
+function destroy_session(to, next){
+  delete Vue.axios.defaults.headers.common['Authorization']
+  store.commit('set_current_user', null)
+  Vue.$cookies.remove('token')
+  if (to.name !== 'login') next({ name: 'login' })
+  else next()
 }
 
 router.beforeEach((to, from, next) => {
@@ -33,14 +28,17 @@ router.beforeEach((to, from, next) => {
 
   if(token) {
     Vue.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    identity_check()
-    next()
+    Vue.axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`)
+    .then( ({data}) => {
+      store.commit('set_current_user', data)
+      next()
+     })
+    .catch( error => {
+      console.error(error)
+      destroy_session(to, next)
+     })
   }
-  else {
-    delete Vue.axios.defaults.headers.common['Authorization']
-    if (to.name !== 'login') next({ name: 'login' })
-    else next()
-  }
+  else destroy_session(to, next)
 })
 
 

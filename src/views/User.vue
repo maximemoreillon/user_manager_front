@@ -38,6 +38,13 @@
 
           <v-list-item>
             <v-list-item-content>
+              <div class="caption">Creation date</div>
+              <div>{{new Date(user.creation_date).toString()}}</div>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-content>
               <v-text-field
                 label="Display name"
                 v-model="user.display_name" />
@@ -51,7 +58,7 @@
             <v-list-item-action>
               <v-switch
                 :disabled="user_is_current_user"
-                v-model="user.admin"/>
+                v-model="user.administrator"/>
             </v-list-item-action>
 
           </v-list-item>
@@ -81,21 +88,18 @@
   </v-card>
 
   <v-snackbar
-      v-model="snack"
-      color="success">
-      User updated successfully
-
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          color="primary"
-          text
-          v-bind="attrs"
-          @click="snack = false"
-        >
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
+    v-model="snack.show"
+    :color="snack.color">
+    {{snack.text}}
+    <template v-slot:action="{ attrs }">
+      <v-btn
+        icon
+        v-bind="attrs"
+        @click="snack.show = false" >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </template>
+  </v-snackbar>
 
 </div>
 </template>
@@ -110,9 +114,13 @@ export default {
   data(){
     return {
       loading: false,
-      error_message: null,
       user: null,
-      snack: false,
+      snack: {
+        show: false,
+        color: 'success',
+        text: ''
+      }
+
     }
   },
   mounted(){
@@ -121,7 +129,6 @@ export default {
   methods: {
     get_user(){
       this.loading = true
-      this.error_message = null
       let user_id = this.$route.params.user_id || 'self'
       let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
       this.axios.get(url)
@@ -130,8 +137,8 @@ export default {
        })
       .catch( error => {
         console.error(error)
-        if(error.response) this.error_message = error.response.data
-        else this.error_message = `Error loading user`
+        if(error.response) this.error_message(error.response.data)
+        else this.error_message(`Error getting user`)
       })
       .finally( () => {
         this.loading = false
@@ -139,44 +146,41 @@ export default {
     },
     delete_user(){
       if(!confirm(`Delete user ${this.user.username}`)) return
-      this.error_message = null
       let user_id = this.$route.params.user_id || 'self'
       let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
       this.axios.delete(url)
       .then( () => { this.$router.push({name: 'users'}) })
       .catch( error => {
         console.error(error)
-        if(error.response) this.error_message = error.response.data
-        else this.error_message = `Error loading user`
+        if(error.response) this.error_message(error.response.data)
+        else this.error_message(`Error deleting user`)
       })
     },
     update_user(){
-
-      return alert(`Not implemented`)
-      /*
-
       const user_id = this.$route.params.user_id || 'self'
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
-
-      const {display_name, admin} = this.user
-
-      const properties = {
-        display_name,
-        admin
-      }
-
+      const {display_name, administrator} = this.user
+      const properties = { display_name, administrator }
       this.axios.patch(url,properties)
       .then( () => {
-        this.snack = true
+        this.sucess_message('User updated successfully')
        })
       .catch( error => {
         console.error(error)
-        if(error.response) this.error_message = error.response.data
-        else this.error_message = `Error loading user`
+        if(error.response) this.error_message(error.response.data)
+        else this.error_message(`Error updating user`)
       })
-      */
-
     },
+    sucess_message(message){
+      this.snack.color = "success"
+      this.snack.text = message
+      this.snack.show = true
+    },
+    error_message(message){
+      this.snack.color = "error"
+      this.snack.text = message
+      this.snack.show = true
+    }
   },
   computed: {
     user_is_current_user(){
@@ -184,7 +188,11 @@ export default {
       if(!user_id) return true
       if(!this.$store.state.current_user) return false
       return this.$store.state.current_user._id === user_id
-    }
+    },
+    current_user_is_Admin(){
+      if(!this.$store.state.current_user) return false
+      return this.$store.state.current_user.administrator
+    },
   }
 
 }

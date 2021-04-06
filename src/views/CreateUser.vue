@@ -1,5 +1,11 @@
 <template>
   <div class="create_user">
+
+    <v-btn
+      text
+      :to="{name: 'users'}">
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-btn>
     <h1>Create user</h1>
 
     <v-form
@@ -13,14 +19,6 @@
         label="Username"
         :rules="usernameRules"
         required/>
-
-      <!--
-      <v-text-field
-        v-model="user_properties.email_address"
-        :rules="emailRules"
-        label="E-mail"
-        required />
-      -->
 
       <v-text-field
         v-model="user_properties.password"
@@ -49,14 +47,16 @@
 </template>
 
 <script>
+
 export default {
   name: 'Users',
+  components: {
+  },
   data(){
     return {
       error_message: null,
       user_properties: {
         username: '',
-        //email_address: '',
         password: '',
       },
       password_confirm: '',
@@ -68,10 +68,6 @@ export default {
       passwordRules: [
         v => !!v || 'Password is required',
         v => v.length >= 5 || 'Password must be less than 5 characters',
-      ],
-      emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+/.test(v) || 'E-mail must be valid',
       ],
       passwordConfirmRules: [
         v => !!v || 'Password confirm is required',

@@ -75,19 +75,14 @@ export default {
   },
   methods: {
     create_user(){
-      if(this.password_confirm === this.user.properties.password_plain){
-        this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/user`, {
-          user: this.user
-        })
-        .then(response => {
-          this.$router.push({name: 'user_details', query: {id: response.data.identity.low}})
-        })
-        .catch( error => console.log(error))
-      }
-      else {
-        alert('Passwords do not match')
-      }
-
+      if(this.password_confirm !== this.user.properties.password_plain) return alert('Passwords do not match')
+      this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users`, {
+        user: this.user
+      })
+      .then(response => {
+        this.$router.push({name: 'user_details', query: {id: response.data.identity}})
+      })
+      .catch( error => console.log(error))
     }
   }
 }

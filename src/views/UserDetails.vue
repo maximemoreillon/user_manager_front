@@ -366,26 +366,25 @@ export default {
       return this.password_too_short || this.passwords_mismatch
     },
     modified_properties(){
-      // Note: Neo4J does not have nested properties
-      const unmodified_user_keys = Object.keys(this.unmodified_user_copy.properties)
-      //const current_keys = Object.keys(this.user.properties)
+      if(!this.user) return
 
-      let modified_properties = {}
-      unmodified_user_keys.forEach((key) => {
+      const current_user_keys = Object.keys(this.user.properties)
+
+      return current_user_keys.reduce( (acc, key) => {
+
+        const current_value = this.user.properties[key]
         const original_value = this.unmodified_user_copy.properties[key]
 
         // Only deal with non-nested stuff
-        if(this.isObject(original_value)) return
-
-        const current_value = this.user.properties[key]
+        if(this.isObject(current_value)) return acc
 
         // If there is a modification, add it to an object of modified properties
         if(original_value !== current_value) {
-          modified_properties[key] = current_value
+          acc[key] = current_value
         }
-      })
 
-      return modified_properties
+        return acc
+      }, {})
     },
     properties_modified(){
       return Object.keys(this.modified_properties).length > 0

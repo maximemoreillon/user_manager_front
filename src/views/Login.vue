@@ -4,6 +4,7 @@
 
 
     <v-form
+      class="mt-4"
       @submit.prevent="login()"
       lazy-validation
       v-model="form_valid" >
@@ -83,7 +84,6 @@ export default {
       processing: false,
       username: '',
       password: '',
-      error_message: null,
       InputRules: [
         v => !!v || 'This field is required',
       ],

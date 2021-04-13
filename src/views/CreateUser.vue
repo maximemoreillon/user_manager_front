@@ -43,6 +43,22 @@
 
     </v-form>
 
+    <v-snackbar
+      color="#C00000"
+      dark
+      v-model="snackbar" >
+      {{ snackbar_text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          icon
+          v-bind="attrs"
+          @click="snackbar = false" >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+
   </div>
 </template>
 
@@ -54,7 +70,8 @@ export default {
   },
   data(){
     return {
-      error_message: null,
+      snackbar: false,
+      snackbar_text: '',
       user_properties: {
         username: '',
         password: '',
@@ -79,7 +96,6 @@ export default {
   methods: {
     create_user(){
       if(!this.$refs.form.validate()) return
-      this.error_message = null
 
       let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
       let method = 'post'
@@ -91,7 +107,9 @@ export default {
       })
       .catch( error => {
         console.error(error)
-        if(error.response) this.error_message = error.response.data
+        if(error.response) this.snackbar_text = error.response.data
+        else this.snackbar_text = 'Something went wrong'
+        this.snackbar = true
       })
     }
   }

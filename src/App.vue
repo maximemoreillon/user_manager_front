@@ -38,7 +38,7 @@
       </v-container>
     </v-main>
 
-    <v-footer class="text-center">
+    <v-footer class="footer text-center" color="transparent">
       User manager - Maxime Moreillon
     </v-footer>
 
@@ -78,5 +78,11 @@ export default {
 @keyframes rotating_logo {
   from {transform: rotate(0deg);}
   to {transform: rotate(360deg);}
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+
 }
 </style>

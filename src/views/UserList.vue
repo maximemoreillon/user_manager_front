@@ -36,14 +36,9 @@ export default {
   methods: {
     get_user_list(){
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
-      this.axios.get(url)
-      .then(response => {
-        this.users.splice(0, this.users.length)
-        response.data.forEach((record) => {
-          let user = record._fields[record._fieldLookup['user']]
-          this.users.push(user)
-        })
-      })
+      const options = {params: {}}
+      this.axios.get(url, options)
+      .then(({data}) => { this.users = data })
       .catch( error => console.log(error))
     }
   }

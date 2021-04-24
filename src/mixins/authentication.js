@@ -3,7 +3,7 @@ export const authentication = {
     user_is_current_user(user){
       if(!user) return false
       if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user.identity.low === user.identity
+      return this.$store.state.current_user.identity === user.identity
     }
   },
   computed: {

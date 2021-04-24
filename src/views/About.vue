@@ -4,7 +4,6 @@
     <p>Version {{version}}</p>
     <p>Developped by <a href="https://maximemoreillon.com">Maxime MOREILLON</a> </p>
     <p>User manager API URL: {{auser_manager_api_url}}</p>
-    <p>Authentication API URL: {{authentication_api_url}}</p>
 
   </div>
 </template>

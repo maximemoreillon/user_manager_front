@@ -59,8 +59,14 @@
           <td>Avatar</td>
           <td>
             <input
+              v-if="image_manager_api_url"
               type="file"
               v-on:change="file_upload($event)">
+
+            <input
+              v-else
+              type="text"
+              v-model="user.properties.avatar_src">
           </td>
         </tr>
 
@@ -216,6 +222,7 @@ export default {
     return {
       user: null,
       unmodified_user_copy: null,
+      image_manager_api_url: process.env.VUE_APP_IMAGE_MANAGER_API_URL,
 
       current_password: '',
       new_password: '',

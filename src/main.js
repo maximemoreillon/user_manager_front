@@ -9,7 +9,10 @@ Vue.use(VueCookies)
 Vue.use(VueAxios, axios)
 
 
+/*
 router.beforeEach((to, from, next) => {
+
+  console.log('beforeEach')
 
   // get current_user
   if(VueCookies.get("jwt")) {
@@ -27,6 +30,7 @@ router.beforeEach((to, from, next) => {
 
   //access_control(next)
 });
+*/
 
 Vue.config.productionTip = false
 

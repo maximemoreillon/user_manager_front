@@ -11,13 +11,13 @@
         <tr>
           <td>Username</td>
           <td>
-            <input type="text" v-model="user.properties.username" placeholder="username">
+            <input type="text" v-model="username" placeholder="username">
           </td>
         </tr>
         <tr>
           <td>Password</td>
           <td>
-            <input type="password" v-model="user.properties.password_plain" placeholder="password">
+            <input type="password" v-model="password" placeholder="password">
           </td>
         </tr>
         <tr>
@@ -60,12 +60,8 @@ export default {
   ],
   data(){
     return {
-      user: {
-        properties: {
-          username: "",
-          password_plain: ""
-        }
-      },
+      username: "",
+      password: "",
       password_confirm: "",
 
     }
@@ -75,14 +71,27 @@ export default {
   },
   methods: {
     create_user(){
-      if(this.password_confirm !== this.user.properties.password_plain) return alert('Passwords do not match')
-      this.axios.post(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users`, {
-        user: this.user
+      if(this.password_confirm !== this.password) return alert('Passwords do not match')
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
+      const body = {
+        username: this.username,
+        password: this.password
+      }
+      this.axios.post(url, body)
+      .then(({data}) => {
+        this.$router.push({name: 'user_details', query: {id: data.identity}})
+       })
+      .catch( (error) => {
+        if(error.response) {
+          console.error(error.response.data)
+          alert(error.response.data)
+        }
+        else {
+          console.error(error)
+          alert(`Failed to create user, see console for details`)
+        }
+
       })
-      .then(response => {
-        this.$router.push({name: 'user_details', query: {id: response.data.identity}})
-      })
-      .catch( error => console.log(error))
     }
   }
 }

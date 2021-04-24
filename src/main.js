@@ -5,8 +5,6 @@ import store from './store'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueCookies from 'vue-cookies'
-//import {access_control} from '@moreillon/vue_access_control'
-
 Vue.use(VueCookies)
 Vue.use(VueAxios, axios)
 
@@ -16,13 +14,9 @@ router.beforeEach((to, from, next) => {
   // get current_user
   if(VueCookies.get("jwt")) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${VueCookies.get('jwt')}`
-    axios.post(`${process.env.VUE_APP_AUTHENTICATION_API_URL}/whoami`)
-    .then(response => {
-      store.commit('set_current_user', response.data)
-    })
-    .catch(error => {
-      console.log(error)
-    })
+    axios.get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`)
+    .then(({data}) => { store.commit('set_current_user', data) })
+    .catch(error => { console.error(error) })
 
     next()
   }

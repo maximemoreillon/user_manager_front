@@ -3,7 +3,7 @@
 
     <AppTemplate
       :options="options"
-      @userChanged="$store.commit('set_current_user', $event)">
+      @user="$store.commit('set_current_user', $event)">
 
       <template v-slot:nav>
         <router-link :to="{ name: 'user_details', params: {user_id: 'self'} }">

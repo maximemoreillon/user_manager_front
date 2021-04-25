@@ -121,7 +121,7 @@
       <v-card-text>
         <v-form @submit.prevent="update_pasword()">
           <v-container>
-            <v-row>
+            <v-row v-if="!current_user_is_admin">
               <v-col cols="12">
                 <v-text-field
                   type="password"
@@ -129,6 +129,8 @@
                   v-model="password_update.current_password"
                   required />
               </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="12">
                 <v-text-field
                   type="password"
@@ -136,6 +138,8 @@
                   v-model="password_update.new_password"
                   required />
               </v-col>
+            </v-row>
+            <v-row>
               <v-col cols="12">
                 <v-text-field
                   type="password"
@@ -286,6 +290,7 @@ export default {
       return this.$route.params.user_id
     },
     user_is_current_user(){
+      if(this.$route.params.user_id === 'self') return true
       if(!this.$store.state.current_user) return false
       return this.$store.state.current_user._id === this.user_id
     },

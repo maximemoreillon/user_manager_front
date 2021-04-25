@@ -8,6 +8,7 @@
       clipped-left>
 
       <v-app-bar-nav-icon
+        v-if="$store.state.current_user"
         @click="drawer = !drawer" />
 
 
@@ -36,6 +37,7 @@
     <v-navigation-drawer
       clipped
       app
+      v-if="$store.state.current_user"
       v-model="drawer">
 
       <v-list

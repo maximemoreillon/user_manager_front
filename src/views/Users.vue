@@ -71,6 +71,8 @@
                     :rules="new_user.usernameRules"
                     required />
                 </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="12">
                   <v-text-field
                     type="password"
@@ -79,6 +81,8 @@
                     :rules="new_user.passwordRules"
                     required />
                 </v-col>
+              </v-row>
+              <v-row>
                 <v-col cols="12">
                   <v-text-field
                     type="password"

@@ -135,8 +135,6 @@ export default {
   name: 'Users',
   data(){
     return {
-      error_message: null,
-
       users: [],
       user_count: 0,
       options: {},
@@ -193,6 +191,8 @@ export default {
       this.axios.get(url)
       .then( ({data}) => {
         this.user_count = data.user_count
+
+        // Not elegant
         this.get_users()
       })
       .catch( error => {
@@ -246,8 +246,8 @@ export default {
         password: this.new_user.password
       }
       this.axios.post(url, body)
-      .then( ({data}) => {
-        this.users.push(data)
+      .then( () => {
+        this.get_user_count()
         this.clear_create_user()
        })
       .catch( error => {

@@ -4,7 +4,12 @@
     <v-app-bar
       app
       color="#444444"
-      dark>
+      dark
+      clipped-left>
+
+      <v-app-bar-nav-icon
+        @click="drawer = !drawer" />
+
 
       <v-img
         alt="Logo"
@@ -15,7 +20,7 @@
         width="40" />
 
         <!-- class="text-no-wrap" to prevent ellipsis (vuetify bug) -->
-      <v-app-bar-title class="text-no-wrap">User manager</v-app-bar-title>
+      <v-app-bar-title>User manager</v-app-bar-title>
 
       <v-spacer />
 
@@ -26,8 +31,32 @@
         <v-icon>mdi-logout</v-icon>
       </v-btn>
 
-
     </v-app-bar>
+
+    <v-navigation-drawer
+      clipped
+      app
+      v-model="drawer">
+
+      <v-list
+        nav >
+        <v-list-item
+          v-for="item in nav"
+          :key="item.label"
+          :to="item.to"
+          link
+          exact >
+          <v-list-item-icon>
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{ item.label }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
+    </v-navigation-drawer>
 
 
 
@@ -59,6 +88,12 @@ export default {
   name: 'App',
 
   data: () => ({
+    drawer: null,
+    nav: [
+      {label: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
+      {label: 'Profile', icon: 'mdi-account', to: {name: 'user', params: {user_id: 'self'}}},
+      {label: 'Info', icon: 'mdi-information-outline', to: {name: 'info', params: {}}},
+    ]
   }),
   methods: {
     logout(){

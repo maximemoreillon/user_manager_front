@@ -1,7 +1,5 @@
 <template>
 <div>
-  <Breadcrumbs />
-
   <v-card
     v-if="user"
     max-width="500"
@@ -23,60 +21,60 @@
       <v-list>
 
         <v-list-item>
-            <v-list-item-content>
-              <div class="caption">ID</div>
-              <div>{{user._id}}</div>
-            </v-list-item-content>
-          </v-list-item>
+          <v-list-item-content>
+            <div class="caption">ID</div>
+            <div>{{user._id}}</div>
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <div class="caption">Username</div>
-              <div>{{user.username}}</div>
-            </v-list-item-content>
-          </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <div class="caption">Username</div>
+            <div>{{user.username}}</div>
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <div class="caption">Creation date</div>
-              <div>{{new Date(user.creation_date).toString()}}</div>
-            </v-list-item-content>
-          </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <div class="caption">Creation date</div>
+            <div>{{new Date(user.creation_date).toString()}}</div>
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>
-              <v-text-field
-                :readonly="!current_user_is_admin && !user_is_current_user"
-                label="Display name"
-                v-model="user.display_name" />
-            </v-list-item-content>
-          </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-text-field
+              :readonly="!current_user_is_admin && !user_is_current_user"
+              label="Display name"
+              v-model="user.display_name" />
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-list-item v-if="current_user_is_admin || user_is_current_user">
-            <v-list-item-content>
-              <v-text-field
-                label="Avatar URL"
-                v-model="user.avatar" />
-            </v-list-item-content>
-          </v-list-item>
+        <v-list-item v-if="current_user_is_admin || user_is_current_user">
+          <v-list-item-content>
+            <v-text-field
+              label="Avatar URL"
+              v-model="user.avatar" />
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-list-item>
-            <v-list-item-content>Admin</v-list-item-content>
-            <v-list-item-action>
-              <v-switch
-                :disabled="user_is_current_user || !current_user_is_admin"
-                v-model="user.administrator"/>
-            </v-list-item-action>
-          </v-list-item>
+        <v-list-item>
+          <v-list-item-content>Admin</v-list-item-content>
+          <v-list-item-action>
+            <v-switch
+              :disabled="user_is_current_user || !current_user_is_admin"
+              v-model="user.administrator"/>
+          </v-list-item-action>
+        </v-list-item>
 
-          <v-list-item
-            v-if="current_user_is_admin || user_is_current_user">
-            <v-list-item-content>Password</v-list-item-content>
-            <v-list-item-action>
-              <v-btn
-                @click="dialog = true">Update</v-btn>
-            </v-list-item-action>
-          </v-list-item>
+        <v-list-item
+          v-if="current_user_is_admin || user_is_current_user">
+          <v-list-item-content>Password</v-list-item-content>
+          <v-list-item-action>
+            <v-btn
+              @click="dialog = true">Update</v-btn>
+          </v-list-item-action>
+        </v-list-item>
 
       </v-list>
 
@@ -173,11 +171,10 @@
 </template>
 
 <script>
-import Breadcrumbs from '@/components/Breadcrumbs.vue'
 export default {
   name: 'User',
   components: {
-    Breadcrumbs
+
   },
   data(){
     return {
@@ -198,6 +195,11 @@ export default {
 
     }
   },
+  watch: {
+    user_id(){
+      this.get_user()
+    }
+  },
   mounted(){
     this.get_user()
   },
@@ -207,8 +209,8 @@ export default {
     },
     get_user(){
       this.loading = true
-      let user_id = this.$route.params.user_id || 'self'
-      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      this.user = null
+      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}`
       this.axios.get(url)
       .then( ({data}) => {
         this.user = data
@@ -220,14 +222,11 @@ export default {
         if(error.response) this.error_message(error.response.data)
         else this.error_message(`Error getting user`)
       })
-      .finally( () => {
-        this.loading = false
-      })
+      .finally( () => { this.loading = false })
     },
     delete_user(){
       if(!confirm(`Delete user ${this.user.username}`)) return
-      let user_id = this.$route.params.user_id || 'self'
-      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      let url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}`
       this.axios.delete(url)
       .then( () => { this.$router.push({name: 'users'}) })
       .catch( error => {
@@ -237,8 +236,7 @@ export default {
       })
     },
     update_user(){
-      const user_id = this.$route.params.user_id || 'self'
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}`
       this.axios.patch(url, this.modified_properties)
       .then( () => {
         this.sucess_message('User updated successfully')
@@ -284,11 +282,12 @@ export default {
     },
   },
   computed: {
+    user_id(){
+      return this.$route.params.user_id
+    },
     user_is_current_user(){
-      const user_id = this.$route.params.user_id
-      if(!user_id) return true
       if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user._id === user_id
+      return this.$store.state.current_user._id === this.user_id
     },
     current_user_is_admin(){
       if(!this.$store.state.current_user) return false

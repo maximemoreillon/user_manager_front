@@ -7,18 +7,20 @@
       dark>
 
       <v-img
-        alt="Vuetify Logo"
+        alt="Logo"
         class="shrink mr-2 rotating_logo"
         contain
         src="@/assets/logo.png"
         transition="scale-transition"
         width="40" />
 
-      <v-app-bar-title>User manager</v-app-bar-title>
+        <!-- class="text-no-wrap" to prevent ellipsis (vuetify bug) -->
+      <v-app-bar-title class="text-no-wrap">User manager</v-app-bar-title>
 
       <v-spacer />
 
       <v-btn
+        v-if="$store.state.current_user"
         icon
         @click="logout()">
         <v-icon>mdi-logout</v-icon>
@@ -32,14 +34,20 @@
 
     <!-- v-container inside main This looks correct -->
     <!-- v-container is here for padding mainly -->
-    <v-main>
+    <v-main class="grey lighten-4">
       <v-container fluid>
         <router-view/>
       </v-container>
     </v-main>
 
-    <v-footer class="footer text-center" color="transparent">
-      User manager - Maxime Moreillon
+    <v-footer>
+      <v-col
+        class="text-center"
+        cols="12" >
+        User manager - Maxime Moreillon
+      </v-col>
+
+
     </v-footer>
 
   </v-app>
@@ -80,9 +88,4 @@ export default {
   to {transform: rotate(360deg);}
 }
 
-.footer {
-  display: flex;
-  justify-content: center;
-
-}
 </style>

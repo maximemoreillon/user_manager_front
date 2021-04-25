@@ -6,7 +6,8 @@
       :to="{name: 'users'}">
       <v-icon>mdi-arrow-left</v-icon>
     </v-btn>
-    <h1>Create user</h1>
+
+    <h1>New user</h1>
 
     <v-form
       @submit.prevent="create_user()"

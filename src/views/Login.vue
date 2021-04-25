@@ -1,53 +1,54 @@
 <template>
-  <div class="login">
+  <div>
+
+    <v-card
+      class="mx-auto py-3 mt-12"
+      max-width="500px">
+      <v-card-title>Login</v-card-title>
+      <v-form
+        class="ma-5"
+        @submit.prevent="login()"
+        lazy-validation
+        v-model="form_valid" >
+
+        <v-row
+          justify="center">
+          <v-col>
+            <v-text-field
+              v-model="username"
+              label="Username"
+              :rules="InputRules"/>
+          </v-col>
+        </v-row>
+        <v-row justify="center">
+          <v-col>
+            <v-text-field
+              v-model="password"
+              type="password"
+              label="Password"
+              :rules="InputRules"/>
+          </v-col>
+        </v-row>
+        <v-row justify="center">
+          <v-col
+            class="text-center">
+            <v-btn
+              type="submit"
+              :disabled="!form_valid || processing"
+              :loading="processing"
+              @click="login()">
+              <v-icon>mdi-login</v-icon>
+              <span class="">Login</span>
+            </v-btn>
+          </v-col>
+        </v-row>
+
+      </v-form>
+    </v-card>
 
 
 
-    <v-form
-      class="mt-4"
-      @submit.prevent="login()"
-      lazy-validation
-      v-model="form_valid" >
 
-      <v-row justify="center">
-        <v-col cols=4>
-          <v-text-field
-            v-model="username"
-            label="Username"
-            :rules="InputRules"/>
-        </v-col>
-      </v-row>
-      <v-row justify="center">
-        <v-col cols=4>
-          <v-text-field
-            v-model="password"
-            type="password"
-            label="Password"
-            :rules="InputRules"/>
-        </v-col>
-      </v-row>
-      <v-row justify="center">
-        <v-col
-          cols=4
-          class="text-center">
-          <v-btn
-            class="mr-4"
-            type="submit"
-            :disabled="!form_valid || processing"
-            :loading="processing"
-            @click="login()">
-            <v-icon>mdi-login</v-icon>
-            <span class="mr-2">Login</span>
-          </v-btn>
-        </v-col>
-      </v-row>
-
-
-
-
-
-
-    </v-form>
 
     <v-snackbar
       color="#C00000"
@@ -122,7 +123,5 @@ export default {
 </script>
 
 <style scoped>
-.debug {
-  outline: 1px solid red;
-}
+
 </style>

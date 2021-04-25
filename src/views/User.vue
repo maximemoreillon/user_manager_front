@@ -1,15 +1,15 @@
 <template>
 <div>
   <Breadcrumbs />
+
   <v-card
-    max-width="400"
-    class="mx-auto">
-
-
-    <template v-if="user">
+    v-if="user"
+    max-width="500"
+    class="mx-auto pa-4">
 
       <v-img
-        src="@/assets/account.svg"
+        contain
+        :src="user.avatar || require('@/assets/account.svg')"
         height="300px"/>
 
       <v-card-title>
@@ -46,45 +46,57 @@
           <v-list-item>
             <v-list-item-content>
               <v-text-field
+                :readonly="!current_user_is_admin && !user_is_current_user"
                 label="Display name"
                 v-model="user.display_name" />
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item>
+          <v-list-item v-if="current_user_is_admin || user_is_current_user">
             <v-list-item-content>
-              Admin
+              <v-text-field
+                label="Avatar URL"
+                v-model="user.avatar" />
             </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-content>Admin</v-list-item-content>
             <v-list-item-action>
               <v-switch
-                :disabled="user_is_current_user"
+                :disabled="user_is_current_user || !current_user_is_admin"
                 v-model="user.administrator"/>
             </v-list-item-action>
+          </v-list-item>
 
+          <v-list-item
+            v-if="current_user_is_admin || user_is_current_user">
+            <v-list-item-content>Password</v-list-item-content>
+            <v-list-item-action>
+              <v-btn
+                @click="dialog = true">Update</v-btn>
+            </v-list-item-action>
           </v-list-item>
 
       </v-list>
 
-      <v-card-actions>
+      <v-card-actions
+        v-if="current_user_is_admin || user_is_current_user">
+        <v-spacer></v-spacer>
         <v-btn
-          class="mx-2"
+          color="#444"
+          text
           :disabled="!properties_modified"
-          @click="update_user()">
-          <v-icon>mdi-content-save</v-icon>
-          <span>Save changes</span>
+          @click="update_user()" >
+          Save
         </v-btn>
-
         <v-btn
-          class="mx-2"
-          @click="delete_user()"
           color="#c00000"
-          dark
-          :disabled="user_is_current_user">
-          <v-icon>mdi-delete</v-icon>
-          <span>Delete user</span>
+          text
+          @click="delete_user()" >
+          Delete
         </v-btn>
       </v-card-actions>
-    </template>
 
   </v-card>
 
@@ -102,6 +114,61 @@
     </template>
   </v-snackbar>
 
+  <!-- password update dialog -->
+  <v-dialog
+    v-model="dialog"
+    max-width="600px">
+    <v-card>
+      <v-card-title>Password update</v-card-title>
+      <v-card-text>
+        <v-form @submit.prevent="update_pasword()">
+          <v-container>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field
+                  type="password"
+                  label="Current password"
+                  v-model="password_update.current_password"
+                  required />
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  type="password"
+                  label="New password"
+                  v-model="password_update.new_password"
+                  required />
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  type="password"
+                  label="New password confirm"
+                  v-model="password_update.new_password_confirm"
+                  required />
+              </v-col>
+            </v-row>
+            <v-btn type="submit" style="display: none;">submit</v-btn>
+          </v-container>
+        </v-form>
+      </v-card-text>
+
+      <v-card-actions >
+        <v-spacer></v-spacer>
+        <v-btn
+          color="blue darken-1"
+          text
+          @click="clear_password_update()" >
+          Cancel
+        </v-btn>
+        <v-btn
+          color="blue darken-1"
+          text
+          @click="update_pasword()" >
+          Save
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+
 </div>
 </template>
 
@@ -117,10 +184,16 @@ export default {
       loading: false,
       user: null,
       unmodified_user_copy: null,
+      dialog: false,
       snack: {
         show: false,
         color: 'success',
         text: ''
+      },
+      password_update: {
+        current_password: '',
+        new_password: '',
+        new_password_confirm: '',
       }
 
     }
@@ -185,7 +258,30 @@ export default {
       this.snack.color = "#c00000"
       this.snack.text = message
       this.snack.show = true
-    }
+    },
+    clear_password_update(){
+      this.password_update.current_password = ''
+      this.password_update.new_password = ''
+      this.password_update.mew_password_confirm = ''
+      this.dialog = false
+    },
+    update_pasword(){
+      const user_id = this.$route.params.user_id || 'self'
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}/password`
+      const {current_password, new_password, new_password_confirm} = this.password_update
+      const body = { current_password, new_password, new_password_confirm}
+      this.axios.put(url,body)
+      .then( () => {
+        this.clear_password_update()
+        this.sucess_message('Password updated successfully')
+       })
+      .catch( error => {
+        console.error(error)
+        if(error.response) this.error_message(error.response.data)
+        else this.error_message(`Error updating password`)
+      })
+
+    },
   },
   computed: {
     user_is_current_user(){
@@ -194,7 +290,7 @@ export default {
       if(!this.$store.state.current_user) return false
       return this.$store.state.current_user._id === user_id
     },
-    current_user_is_Admin(){
+    current_user_is_admin(){
       if(!this.$store.state.current_user) return false
       return this.$store.state.current_user.administrator
     },

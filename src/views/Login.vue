@@ -35,8 +35,7 @@
             <v-btn
               type="submit"
               :disabled="!form_valid || processing"
-              :loading="processing"
-              @click="login()">
+              :loading="processing">
               <v-icon>mdi-login</v-icon>
               <span class="">Login</span>
             </v-btn>

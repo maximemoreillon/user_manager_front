@@ -23,7 +23,7 @@
             hide-details/>
           -->
 
-          <v-spacer></v-spacer>
+          <v-spacer/>
 
           <v-btn
             v-if="current_user_is_admin"
@@ -53,14 +53,16 @@
     <v-dialog
       v-model="new_user.dialog"
       max-width="600px">
-      <v-card>
-        <v-card-title>Create user</v-card-title>
-        <v-card-text>
-          <v-form
-            @submit.prevent="create_user()"
-            ref="user_create_form"
-            v-model="new_user.valid"
-            lazy-validation>
+
+      <v-form
+        @submit.prevent="create_user()"
+        ref="user_create_form"
+        v-model="new_user.valid"
+        lazy-validation>
+
+        <v-card>
+          <v-card-title>Create user</v-card-title>
+          <v-card-text>
             <v-container>
               <v-row>
                 <v-col cols="12">
@@ -92,28 +94,26 @@
                     required />
                 </v-col>
               </v-row>
-              <v-btn type="submit" style="display: none;">submit</v-btn>
             </v-container>
-          </v-form>
-        </v-card-text>
-
-        <v-card-actions >
-          <v-spacer/>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="clear_create_user()" >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="create_user()"
-            :disabled="!new_user.valid">
-            Create
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+          </v-card-text>
+          <v-card-actions >
+            <v-spacer/>
+            <v-btn
+              color="blue darken-1"
+              text
+              @click="clear_create_user()" >
+              Cancel
+            </v-btn>
+            <v-btn
+              type="submit"
+              color="blue darken-1"
+              text
+              :disabled="!new_user.valid">
+              Create
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
 
     <v-snackbar

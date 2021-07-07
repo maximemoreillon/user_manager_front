@@ -32,15 +32,8 @@ export default {
   mounted(){
     this.get_services_version()
   },
-  get_services_version () {
-    this.services.forEach((service) => {
-      if (service.version) return
-      service.version = 'Connecting...'
-      this.axios.get(service.url)
-        .then(({ data }) => { service.version = data.version })
-        .catch(() => { service.version = 'Unable to connect' })
-    })
-  },
+
+
   data(){
     return {
       services: [
@@ -59,6 +52,18 @@ export default {
     }
   },
 
+  methods: {
+    get_services_version () {
+      this.services.forEach((service) => {
+        if (service.version) return
+        service.version = 'Connecting...'
+        this.axios.get(service.url)
+          .then(({ data }) => { service.version = data.version })
+          .catch(() => { service.version = 'Unable to connect' })
+      })
+    },
+  }
+
 
 }
 </script>
@@ -67,5 +72,9 @@ export default {
 
 a {
   color: currentcolor;
+}
+
+th {
+  text-align: left;
 }
 </style>

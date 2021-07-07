@@ -40,7 +40,7 @@ export default {
         .then(({ data }) => { service.version = data.version })
         .catch(() => { service.version = 'Unable to connect' })
     })
-  }
+  },
   data(){
     return {
       services: [

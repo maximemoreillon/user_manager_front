@@ -2,8 +2,8 @@
 <div>
   <v-card
     v-if="user"
-    max-width="500"
-    class="mx-auto pa-4">
+    max-width="600"
+    class="mx-auto mt-2 pa-4">
 
       <v-img
         contain
@@ -58,8 +58,16 @@
           </v-list-item-content>
         </v-list-item>
 
+        <v-list-item v-if="user_is_current_user">
+          <v-list-item-content>
+            <v-text-field
+              label="Token"
+              :value="token" />
+          </v-list-item-content>
+        </v-list-item>
+
         <v-list-item>
-          <v-list-item-content>Admin</v-list-item-content>
+          <v-list-item-content>Administrator</v-list-item-content>
           <v-list-item-action>
             <v-switch
               :disabled="user_is_current_user || !current_user_is_admin"
@@ -69,7 +77,7 @@
 
         <v-list-item
           v-if="current_user_is_admin || user_is_current_user">
-          <v-list-item-content>Password</v-list-item-content>
+          <v-list-item-content>Password update</v-list-item-content>
           <v-list-item-action>
             <v-btn
               @click="dialog = true">Update</v-btn>
@@ -324,6 +332,9 @@ export default {
     },
     properties_modified(){
       return Object.keys(this.modified_properties).length > 0
+    },
+    token(){
+      return localStorage.jwt
     }
   }
 

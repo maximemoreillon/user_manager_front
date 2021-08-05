@@ -1,128 +1,99 @@
 <template>
-  <v-app>
+  <AppTemplate
+    :options="options"
+    @user="user_changed($event)">
 
-    <v-app-bar
-      app
-      color="#444444"
-      dark
-      clipped-left>
-
-      <v-app-bar-nav-icon
-        v-if="$store.state.current_user"
-        @click="drawer = !drawer" />
-
-
-      <v-img
-        alt="Logo"
-        class="shrink mr-2 rotating_logo"
-        contain
-        src="@/assets/logo.png"
-        transition="scale-transition"
-        width="40" />
-
-        <!-- class="text-no-wrap" to prevent ellipsis (vuetify bug) -->
-      <v-app-bar-title>User manager</v-app-bar-title>
-
-      <v-spacer />
-
-      <v-btn
-        v-if="$store.state.current_user"
-        icon
-        @click="logout()">
-        <v-icon>mdi-logout</v-icon>
-      </v-btn>
-
-    </v-app-bar>
-
-    <v-navigation-drawer
-      clipped
-      app
-      v-if="$store.state.current_user"
-      v-model="drawer">
-
+    <template v-slot:nav>
       <v-list
+        dense
         nav >
+
+
+
         <v-list-item
-          v-for="item in nav"
-          :key="item.label"
+          v-for="(item, index) in nav"
+          :key="`nav_item_${index}`"
           :to="item.to"
-          link
-          exact >
+          exact>
           <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-icon>{{item.icon}}</v-icon>
           </v-list-item-icon>
 
           <v-list-item-content>
-            <v-list-item-title>{{ item.label }}</v-list-item-title>
+            <v-list-item-title>{{item.title}}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+        <template v-if="current_user_is_admin">
+          <v-subheader>Admin</v-subheader>
+
+          <v-list-item
+            v-for="(item, index) in nav_admin"
+            :key="`nav_item_admin_${index}`"
+            :to="item.to"
+            exact>
+            <v-list-item-icon>
+              <v-icon>{{item.icon}}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{item.title}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+
+
+
+
       </v-list>
+    </template>
 
-    </v-navigation-drawer>
-
-
-
-
-    <!-- v-container inside main This looks correct -->
-    <!-- v-container is here for padding mainly -->
-    <v-main class="grey lighten-4">
-      <v-container fluid>
-        <router-view/>
-      </v-container>
-    </v-main>
-
-    <v-footer>
-      <v-col
-        class="text-center"
-        cols="12" >
-        User manager - Maxime Moreillon
-      </v-col>
-
-
-    </v-footer>
-
-  </v-app>
+  </AppTemplate>
 </template>
 
 <script>
+import AppTemplate from '@moreillon/vue_application_template_vuetify'
 
 export default {
   name: 'App',
-
+  components: {
+    AppTemplate
+  },
   data: () => ({
-    drawer: null,
+    options: {
+      title: "User manager",
+      authenticate: true,
+      skip_greetings: process.env.NODE_ENV === 'developments',
+      main_class: '#eeeeee',
+      footer_color: '#eeeeee',
+      login_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/auth/login`,
+      identification_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`,
+    },
     nav: [
-      {label: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
-      {label: 'Profile', icon: 'mdi-account', to: {name: 'user', params: {user_id: 'self'}}},
-      {label: 'Info', icon: 'mdi-information-outline', to: {name: 'info', params: {}}},
+      //{title: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
+      {title: 'Profile', icon: 'mdi-account', to: {name: 'user', params: {user_id: 'self'}}},
+      {title: 'Info', icon: 'mdi-information-outline', to: {name: 'info', params: {}}},
+    ],
+    nav_admin: [
+      {title: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
     ]
   }),
   methods: {
-    logout(){
-
-      delete this.axios.defaults.headers.common['Authorization']
-      this.$cookies.remove('token')
-      this.$router.push({name: 'login'})
+    user_changed(user){
+      this.$store.commit('set_current_user', user)
     }
   },
   computed: {
-
+    current_user_is_admin(){
+      if(!this.$store.state.current_user) return false
+      return this.$store.state.current_user.administrator
+    },
   }
 
 };
 </script>
 
 <style>
-.rotating_logo {
-  animation-name: rotating_logo;
-  animation-duration: 60s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
 
-@keyframes rotating_logo {
-  from {transform: rotate(0deg);}
-  to {transform: rotate(360deg);}
-}
 
 </style>

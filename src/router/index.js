@@ -5,18 +5,17 @@ import Users from '../views/Users.vue'
 import User from '../views/User.vue'
 import Info from '../views/Info.vue'
 
-import Login from '../views/Login.vue'
 
 
 Vue.use(VueRouter)
 
 const routes = [
 
-  {
-    path: '/login',
-    name: 'login',
-    component: Login,
-  },
+  // {
+  //   path: '/login',
+  //   name: 'login',
+  //   component: Login,
+  // },
   {
     path: '/users',
     name: 'users',
@@ -34,7 +33,7 @@ const routes = [
   },
   {
     // will match everything
-    path: '*', redirect: {name :'users'}
+    path: '*', redirect: {name :'user', params: {user_id: 'self'}}
   }
 
 ]

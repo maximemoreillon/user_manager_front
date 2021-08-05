@@ -3,6 +3,19 @@
     <v-dialog
       v-model="dialog"
       max-width="600px">
+
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn
+          text
+          v-bind="attrs"
+          v-on="on">
+          <v-icon>mdi-account-plus</v-icon>
+          <span class="ml-2">Create user</span>
+        </v-btn>
+      </template>
+
+
+
       <v-card>
         <v-card-title>Create user</v-card-title>
         <v-card-text>
@@ -60,6 +73,8 @@
           </v-btn>
         </v-card-actions>
       </v-card>
+
+
     </v-dialog>
 
     <v-snackbar
@@ -85,10 +100,12 @@
 export default {
   name: 'Users',
   props: {
-    dialog: Boolean,
+
   },
   data(){
     return {
+
+      dialog: false,
 
       loading: false,
       new_user: {
@@ -137,8 +154,10 @@ export default {
       }
       this.axios.post(url, body)
       .then( ({data}) => {
-        this.users.push(data)
+
         this.clear_create_user()
+        this.$emit('user_created', data)
+        this.dialog = false
        })
       .catch( error => {
         console.error(error)

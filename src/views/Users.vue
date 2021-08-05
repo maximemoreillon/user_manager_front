@@ -1,120 +1,63 @@
 <template>
-  <div class="">
-    <v-data-table
-      class="elevation-1"
-      :loading="loading"
-      :headers="headers"
-      :items="users"
-      :options.sync="options"
-      :server-items-length="user_count"
-      @click:row="row_clicked($event)">
+  <v-card >
 
-      <template v-slot:top>
-        <v-toolbar
-          flat>
-          <v-toolbar-title>Users</v-toolbar-title>
+    <v-toolbar flat>
+      <v-toolbar-title>Users</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <UserCreateDialog
+        @user_created="user_created($event)"/>
+    </v-toolbar>
 
-          <!--
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details/>
-          -->
+    <v-card-text>
 
-          <v-spacer/>
+      <v-data-table
+        :loading="loading"
+        :headers="headers"
+        :items="users"
+        :options.sync="options"
+        :server-items-length="user_count"
+        @click:row="row_clicked($event)">
 
-          <v-btn
-            v-if="current_user_is_admin"
-            @click="new_user.dialog = true">
-            <v-icon>mdi-account-plus</v-icon>
-            <span>Create user</span>
-            </v-btn>
+        <template v-slot:top>
+          <v-toolbar
+            flat>
 
-        </v-toolbar>
-      </template>
-
-      <!-- Avatar -->
-      <template v-slot:item.avatar="{ item }">
-        <v-avatar size="24">
-          <img :src="item.avatar" alt="avatar" v-if="item.avatar">
-          <v-icon v-else>mdi-account-circle</v-icon>
-        </v-avatar>
-      </template>
-
-      <!-- Admin -->
-      <template v-slot:item.administrator="{ item }">
-        <v-icon v-if="item.administrator">mdi-check</v-icon>
-      </template>
-    </v-data-table>
-
-    <!-- New user dialog -->
-    <v-dialog
-      v-model="new_user.dialog"
-      max-width="600px">
-
-      <v-form
-        @submit.prevent="create_user()"
-        ref="user_create_form"
-        v-model="new_user.valid"
-        lazy-validation>
-
-        <v-card>
-          <v-card-title>Create user</v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    type="text"
-                    label="Username"
-                    v-model="new_user.username"
-                    :rules="new_user.usernameRules"
-                    required />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    type="password"
-                    label="Password"
-                    v-model="new_user.password"
-                    :rules="new_user.passwordRules"
-                    required />
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    type="password"
-                    label="Password confirm"
-                    v-model="new_user.password_confirm"
-                    :rules="new_user.passwordConfirmRules"
-                    required />
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-          <v-card-actions >
             <v-spacer/>
-            <v-btn
-              color="blue darken-1"
-              text
-              @click="clear_create_user()" >
-              Cancel
-            </v-btn>
-            <v-btn
-              type="submit"
-              color="blue darken-1"
-              text
-              :disabled="!new_user.valid">
-              Create
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-form>
-    </v-dialog>
+
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Search"
+              single-line
+              hide-details/>
+
+
+
+
+
+          </v-toolbar>
+        </template>
+
+        <!-- Avatar -->
+        <template v-slot:item.avatar="{ item }">
+          <v-avatar size="24">
+            <img :src="item.avatar" alt="avatar" v-if="item.avatar">
+            <v-icon v-else>mdi-account-circle</v-icon>
+          </v-avatar>
+        </template>
+
+        <!-- Admin -->
+        <template v-slot:item.administrator="{ item }">
+          <v-icon v-if="item.administrator">mdi-check</v-icon>
+        </template>
+      </v-data-table>
+
+    </v-card-text>
+
+
+
+
+
 
     <v-snackbar
       color="#C00000"
@@ -131,12 +74,17 @@
         </v-btn>
       </template>
     </v-snackbar>
-  </div>
+  </v-card>
 </template>
 
 <script>
+import UserCreateDialog from '@/components/UserCreateDialog.vue'
+
 export default {
   name: 'Users',
+  components: {
+    UserCreateDialog
+  },
   data(){
     return {
       users: [],
@@ -150,25 +98,7 @@ export default {
       ],
       loading: false,
       search: '',
-      new_user: {
-        username: '',
-        password: '',
-        password_confirm: '',
-        dialog: false,
-        valid: false,
-        usernameRules: [
-          v => !!v || 'Username is required',
-          v => v.length <= 10 || 'Name must be less than 10 characters',
-        ],
-        passwordRules: [
-          v => !!v || 'Password is required',
-          v => v.length >= 5 || 'Password must be less than 5 characters',
-        ],
-        passwordConfirmRules: [
-          v => !!v || 'Password confirm is required',
-          v => v === this.new_user.password || 'Passwords must match',
-        ],
-      },
+
 
       snackbar: {
         show: false,
@@ -235,32 +165,10 @@ export default {
     row_clicked(item){
       this.$router.push({name: 'user', params: {user_id: item._id}})
     },
-    clear_create_user(){
-      this.new_user.username = ''
-      this.new_user.password = ''
-      this.new_user.password_confirm = ''
-      this.new_user.dialog = false
-    },
-    create_user(){
-      if(!this.$refs.user_create_form.validate()) return
-
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
-      const body = {
-        username: this.new_user.username,
-        password: this.new_user.password
-      }
-      this.axios.post(url, body)
-      .then( () => {
-        this.get_user_count()
-        this.clear_create_user()
-       })
-      .catch( error => {
-        console.error(error)
-        if(error.response) this.snackbar.text = error.response.data
-        else this.snackbar.text = 'Failed to create user'
-        this.snackbar.show = true
-      })
+    user_created(){
+      this.get_user_count()
     }
+
   },
   computed: {
     user_is_current_user(){

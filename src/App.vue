@@ -63,9 +63,9 @@ export default {
     options: {
       title: "User manager",
       authenticate: true,
-      skip_greetings: process.env.NODE_ENV === 'developments',
-      main_class: '#eeeeee',
-      footer_color: '#eeeeee',
+      skip_greetings: process.env.NODE_ENV === 'development',
+      main_class: 'grey lighten-5',
+      footer_color: 'grey lighten-5',
       login_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/auth/login`,
       identification_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`,
     },

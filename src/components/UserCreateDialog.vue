@@ -31,7 +31,7 @@
                     type="text"
                     label="Username"
                     v-model="new_user.username"
-                    :rules="new_user.usernameRules"
+                    :rules="usernameRules"
                     required />
                 </v-col>
                 <v-col cols="12">
@@ -39,7 +39,7 @@
                     type="password"
                     label="Password"
                     v-model="new_user.password"
-                    :rules="new_user.passwordRules"
+                    :rules="passwordRules"
                     required />
                 </v-col>
                 <v-col cols="12">
@@ -47,7 +47,7 @@
                     type="password"
                     label="Password confirm"
                     v-model="new_user.password_confirm"
-                    :rules="new_user.passwordConfirmRules"
+                    :rules="passwordConfirmRules"
                     required />
                 </v-col>
               </v-row>
@@ -68,7 +68,7 @@
             color="blue darken-1"
             text
             @click="create_user()"
-            :disabled="!new_user.valid">
+            :disabled="!valid">
             Create
           </v-btn>
         </v-card-actions>
@@ -112,21 +112,22 @@ export default {
         username: '',
         password: '',
         password_confirm: '',
-        dialog: false,
-        valid: false,
-        usernameRules: [
-          v => !!v || 'Username is required',
-          v => v.length <= 10 || 'Name must be less than 10 characters',
-        ],
-        passwordRules: [
-          v => !!v || 'Password is required',
-          v => v.length >= 5 || 'Password must be less than 5 characters',
-        ],
-        passwordConfirmRules: [
-          v => !!v || 'Password confirm is required',
-          v => v === this.new_user.password || 'Passwords must match',
-        ],
+
       },
+
+      valid: false,
+      usernameRules: [
+        v => !!v || 'Username is required',
+        v => v.length <= 10 || 'Name must be less than 10 characters',
+      ],
+      passwordRules: [
+        v => !!v || 'Password is required',
+        v => v.length >= 5 || 'Password must be less than 5 characters',
+      ],
+      passwordConfirmRules: [
+        v => !!v || 'Password confirm is required',
+        v => v === this.new_user.password || 'Passwords must match',
+      ],
 
       snackbar: {
         show: false,
@@ -142,7 +143,7 @@ export default {
       this.new_user.username = ''
       this.new_user.password = ''
       this.new_user.password_confirm = ''
-      this.new_user.dialog = false
+      this.dialog = false
     },
     create_user(){
       if(!this.$refs.user_create_form.validate()) return

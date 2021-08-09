@@ -1,45 +1,9 @@
 <template>
-  <v-app>
+  <AppTemplate
+    :options="options"
+    @user="user_changed($event)">
 
-    <v-app-bar
-      app
-      color="#444444"
-      dark
-      clipped-left>
-
-      <v-app-bar-nav-icon
-        v-if="$store.state.current_user"
-        @click="drawer = !drawer" />
-
-
-      <v-img
-        alt="Logo"
-        class="shrink mr-2 rotating_logo"
-        contain
-        src="@/assets/logo.png"
-        transition="scale-transition"
-        width="40" />
-
-        <!-- class="text-no-wrap" to prevent ellipsis (vuetify bug) -->
-      <v-app-bar-title>User manager</v-app-bar-title>
-
-      <v-spacer />
-
-      <v-btn
-        v-if="$store.state.current_user"
-        icon
-        @click="logout()">
-        <v-icon>mdi-logout</v-icon>
-      </v-btn>
-
-    </v-app-bar>
-
-    <v-navigation-drawer
-      clipped
-      app
-      v-if="$store.state.current_user"
-      v-model="drawer">
-
+    <template v-slot:nav>
       <v-list
         dense
         nav >
@@ -82,40 +46,29 @@
 
 
       </v-list>
+    </template>
 
-    </v-navigation-drawer>
-
-
-
-
-    <!-- v-container inside main This looks correct -->
-    <!-- v-container is here for padding mainly -->
-    <v-main class="grey lighten-4">
-      <v-container fluid>
-        <router-view/>
-      </v-container>
-    </v-main>
-
-    <v-footer>
-      <v-col
-        class="text-center"
-        cols="12" >
-        User manager - Maxime Moreillon
-      </v-col>
-
-
-    </v-footer>
-
-  </v-app>
+  </AppTemplate>
 </template>
 
 <script>
+import AppTemplate from '@moreillon/vue_application_template_vuetify'
 
 export default {
   name: 'App',
-
+  components: {
+    AppTemplate
+  },
   data: () => ({
-    drawer: null,
+    options: {
+      title: "User manager",
+      authenticate: false,
+      skip_greetings: process.env.NODE_ENV === 'development',
+      main_class: 'grey lighten-5',
+      footer_color: 'grey lighten-5',
+      login_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/auth/login`,
+      identification_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`,
+    },
     nav: [
       //{title: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
       {title: 'Profile', icon: 'mdi-account', to: {name: 'user', params: {user_id: 'self'}}},
@@ -123,15 +76,11 @@ export default {
     ],
     nav_admin: [
       {title: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
-    ],
+    ]
   }),
   methods: {
-    logout(){
-
-      delete this.axios.defaults.headers.common['Authorization']
-      //this.$cookies.remove('token')
-      localStorage.removeItem('jwt')
-      this.$router.push({name: 'login'})
+    user_changed(user){
+      this.$store.commit('set_current_user', user)
     }
   },
   computed: {
@@ -145,16 +94,6 @@ export default {
 </script>
 
 <style>
-.rotating_logo {
-  animation-name: rotating_logo;
-  animation-duration: 60s;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
 
-@keyframes rotating_logo {
-  from {transform: rotate(0deg);}
-  to {transform: rotate(360deg);}
-}
 
 </style>

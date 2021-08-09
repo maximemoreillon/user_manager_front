@@ -5,17 +5,21 @@ import Users from '../views/Users.vue'
 import User from '../views/User.vue'
 import Info from '../views/Info.vue'
 
-
-
 Vue.use(VueRouter)
 
 const routes = [
 
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   component: Login,
-  // },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/Login.vue'),
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/Register.vue'),
+  },
+
   {
     path: '/users',
     name: 'users',
@@ -25,6 +29,11 @@ const routes = [
     path: '/users/:user_id',
     name: 'user',
     component: User,
+  },
+  {
+    path: '/activate',
+    name: 'activate',
+    component: () => import('@/views/Activate.vue'),
   },
   {
     path: '/info',

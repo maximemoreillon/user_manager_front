@@ -46,9 +46,15 @@
           </v-avatar>
         </template>
 
-        <!-- Admin -->
+        <!-- Boolean properties -->
         <template v-slot:item.administrator="{ item }">
           <v-icon v-if="item.administrator">mdi-check</v-icon>
+        </template>
+        <template v-slot:item.activated="{ item }">
+          <v-icon v-if="item.activated">mdi-check</v-icon>
+        </template>
+        <template v-slot:item.locked="{ item }">
+          <v-icon v-if="item.locked">mdi-check</v-icon>
         </template>
       </v-data-table>
 
@@ -73,6 +79,7 @@
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </template>
+
     </v-snackbar>
   </v-card>
 </template>
@@ -94,7 +101,9 @@ export default {
         {text: 'Avatar', value:'avatar'},
         {text: 'Username', value:'username'},
         {text: 'Display name', value:'display_name'},
-        {text: 'Administrator', value:'administrator'}
+        {text: 'Administrator', value:'administrator'},
+        {text: 'Activated', value:'activated'},
+        {text: 'Locked', value:'locked'},
       ],
       loading: false,
       search: '',

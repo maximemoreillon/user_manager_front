@@ -36,6 +36,13 @@
 
         <v-list-item>
           <v-list-item-content>
+            <div class="caption">E-mail address</div>
+            <div>{{user.email_address || 'Not set'}}</div>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item>
+          <v-list-item-content>
             <div class="caption">Creation date</div>
             <div>{{new Date(user.creation_date).toString()}}</div>
           </v-list-item-content>
@@ -75,12 +82,29 @@
           </v-list-item-action>
         </v-list-item>
 
+        <v-list-item>
+          <v-list-item-content>Activated</v-list-item-content>
+          <v-list-item-action>
+            <v-switch
+              :disabled="user_is_current_user || !current_user_is_admin"
+              v-model="user.activated"/>
+          </v-list-item-action>
+        </v-list-item>
+
+        <v-list-item>
+          <v-list-item-content>Locked</v-list-item-content>
+          <v-list-item-action>
+            <v-switch
+              :disabled="user_is_current_user || !current_user_is_admin"
+              v-model="user.locked"/>
+          </v-list-item-action>
+        </v-list-item>
+
         <v-list-item
           v-if="current_user_is_admin || user_is_current_user">
           <v-list-item-content>Password update</v-list-item-content>
           <v-list-item-action>
-            <v-btn
-              @click="dialog = true">Update</v-btn>
+            <PasswordUpdateDialog />
           </v-list-item-action>
         </v-list-item>
 
@@ -120,73 +144,20 @@
     </template>
   </v-snackbar>
 
-  <!-- password update dialog -->
-  <v-dialog
-    v-model="dialog"
-    max-width="600px">
-    <v-card>
-      <v-card-title>Password update</v-card-title>
-      <v-card-text>
-        <v-form @submit.prevent="update_pasword()">
-          <v-container>
-            <v-row v-if="!current_user_is_admin">
-              <v-col cols="12">
-                <v-text-field
-                  type="password"
-                  label="Current password"
-                  v-model="password_update.current_password"
-                  required />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  type="password"
-                  label="New password"
-                  v-model="password_update.new_password"
-                  required />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12">
-                <v-text-field
-                  type="password"
-                  label="New password confirm"
-                  v-model="password_update.new_password_confirm"
-                  required />
-              </v-col>
-            </v-row>
-            <v-btn type="submit" style="display: none;">submit</v-btn>
-          </v-container>
-        </v-form>
-      </v-card-text>
 
-      <v-card-actions >
-        <v-spacer></v-spacer>
-        <v-btn
-          color="blue darken-1"
-          text
-          @click="clear_password_update()" >
-          Cancel
-        </v-btn>
-        <v-btn
-          color="blue darken-1"
-          text
-          @click="update_pasword()" >
-          Save
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+
+
 
 </div>
 </template>
 
 <script>
+import PasswordUpdateDialog from '@/components/PasswordUpdateDialog.vue'
+
 export default {
   name: 'User',
   components: {
-
+    PasswordUpdateDialog,
   },
   data(){
     return {
@@ -199,11 +170,7 @@ export default {
         color: 'success',
         text: ''
       },
-      password_update: {
-        current_password: '',
-        new_password: '',
-        new_password_confirm: '',
-      }
+
 
     }
   },
@@ -269,29 +236,8 @@ export default {
       this.snack.text = message
       this.snack.show = true
     },
-    clear_password_update(){
-      this.password_update.current_password = ''
-      this.password_update.new_password = ''
-      this.password_update.mew_password_confirm = ''
-      this.dialog = false
-    },
-    update_pasword(){
-      const user_id = this.$route.params.user_id || 'self'
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}/password`
-      const {current_password, new_password, new_password_confirm} = this.password_update
-      const body = { current_password, new_password, new_password_confirm}
-      this.axios.put(url,body)
-      .then( () => {
-        this.clear_password_update()
-        this.sucess_message('Password updated successfully')
-       })
-      .catch( error => {
-        console.error(error)
-        if(error.response) this.error_message(error.response.data)
-        else this.error_message(`Error updating password`)
-      })
 
-    },
+
   },
   computed: {
     user_id(){

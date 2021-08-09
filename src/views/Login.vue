@@ -5,44 +5,58 @@
       class="mx-auto py-3 mt-12"
       max-width="500px">
       <v-card-title>Login</v-card-title>
-      <v-form
-        class="ma-5"
-        @submit.prevent="login()"
-        lazy-validation
-        v-model="form_valid" >
 
-        <v-row
-          justify="center">
-          <v-col>
-            <v-text-field
-              v-model="username"
-              label="Username"
-              :rules="InputRules"/>
-          </v-col>
-        </v-row>
-        <v-row justify="center">
-          <v-col>
-            <v-text-field
-              v-model="password"
-              type="password"
-              label="Password"
-              :rules="InputRules"/>
-          </v-col>
-        </v-row>
+      <v-card-text>
+        <v-form
+          @submit.prevent="login()"
+          lazy-validation
+          v-model="form_valid" >
+
+          <v-row
+            justify="center">
+            <v-col>
+              <v-text-field
+                v-model="username"
+                label="Username"
+                :rules="InputRules"/>
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col>
+              <v-text-field
+                v-model="password"
+                type="password"
+                label="Password"
+                :rules="InputRules"/>
+            </v-col>
+          </v-row>
+          <v-row justify="center">
+            <v-col
+              class="text-center">
+              <v-btn
+                type="submit"
+                :disabled="!form_valid || processing"
+                :loading="processing">
+                <v-icon>mdi-login</v-icon>
+                <span class="">Login</span>
+              </v-btn>
+            </v-col>
+          </v-row>
+
+        </v-form>
+      </v-card-text>
+
+      <v-card-text>
         <v-row justify="center">
           <v-col
             class="text-center">
-            <v-btn
-              type="submit"
-              :disabled="!form_valid || processing"
-              :loading="processing">
-              <v-icon>mdi-login</v-icon>
-              <span class="">Login</span>
-            </v-btn>
+            No account? click <router-link :to="{ name: 'register' }">here</router-link> to create one.
           </v-col>
         </v-row>
+      </v-card-text>
 
-      </v-form>
+
+
     </v-card>
 
 
@@ -103,10 +117,11 @@ export default {
         this.axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 
         // Set cookies
-        this.$cookies.set('token', jwt, '14d', null, process.env.VUE_APP_COOKIE_DOMAIN, null, 'Strict')
+        //this.$cookies.set('token', jwt, '14d', null, process.env.VUE_APP_COOKIE_DOMAIN, null, 'Strict')
+        localStorage.jwt = jwt
 
         // Redirect
-        this.$router.push({name: 'users'})
+        this.$router.push({name: 'user', params: {user_id: 'self'}})
       })
       .catch( error => {
         console.error(error)

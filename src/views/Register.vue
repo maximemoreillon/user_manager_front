@@ -4,7 +4,7 @@
     max-width="500px">
     <v-card-title>Account registration</v-card-title>
 
-    <template v-if="!success && !processing">
+    <template v-if="!success">
       <v-card-text>
         <v-form
           @submit.prevent="create_user()"
@@ -74,7 +74,7 @@
       </v-card-text>
     </template>
 
-    <template v-if="success">
+    <template v-if="!processing && success">
       <v-card-text>
         Account registration successfull. An email has been sent to your address for activation.
       </v-card-text>
@@ -135,11 +135,11 @@ export default {
 
       usernameRules: [
         v => !!v || 'Username is required',
-        v => (v && v.length < 50) || 'Name must be less than 50 characters',
+        v => (!!v && v.length < 50) || 'Name must be less than 50 characters',
       ],
       emailRules: [
         v => !!v || this.current_user_is_admin || 'e-mail address is required',
-        v => (v && v.length < 50) || this.current_user_is_admin || 'email_address must be less than 50 characters',
+        v => (!!v && v.length < 50) || this.current_user_is_admin || 'email_address must be less than 50 characters',
         v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || this.current_user_is_admin || 'E-mail must be valid'
       ],
       passwordRules: [
@@ -178,7 +178,7 @@ export default {
       const body = this.new_user
       this.axios.post(url, body)
       .then( () => {
-        if(this.current_user.administrator) this.$router.push({name: 'users'})
+        if(this.current_user_is_admin) this.$router.push({name: 'users'})
         else this.success = true
        })
       .catch(this.error_handling)
@@ -191,7 +191,7 @@ export default {
     },
     current_user_is_admin(){
       if(!this.current_user) return false
-      return this.$store.state.current_user
+      return this.$store.state.current_user.administrator
     }
   }
 

@@ -123,6 +123,7 @@
         <v-btn
           color="#c00000"
           text
+          :disabled="user_is_current_user"
           @click="delete_user()" >
           Delete
         </v-btn>

@@ -4,8 +4,15 @@
     <v-toolbar flat>
       <v-toolbar-title>Users</v-toolbar-title>
       <v-spacer></v-spacer>
-      <UserCreateDialog
-        @user_created="user_created($event)"/>
+      <v-btn
+        text
+        :to="{name: 'register'}">
+        <v-icon>mdi-account-plus</v-icon>
+        <span class="ml-1">Create user</span>
+      </v-btn>
+
+      <!-- <UserCreateDialog
+        @user_created="user_created($event)"/> -->
     </v-toolbar>
 
     <v-card-text>
@@ -85,12 +92,12 @@
 </template>
 
 <script>
-import UserCreateDialog from '@/components/UserCreateDialog.vue'
+// import UserCreateDialog from '@/components/UserCreateDialog.vue'
 
 export default {
   name: 'Users',
   components: {
-    UserCreateDialog
+    // UserCreateDialog
   },
   data(){
     return {

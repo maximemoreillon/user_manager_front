@@ -118,7 +118,7 @@ export default {
       valid: false,
       usernameRules: [
         v => !!v || 'Username is required',
-        v => v.length <= 10 || 'Name must be less than 10 characters',
+        v => v.length <= 50 || 'Name must be less than 50 characters',
       ],
       passwordRules: [
         v => !!v || 'Password is required',

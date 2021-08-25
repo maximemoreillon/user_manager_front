@@ -1,6 +1,6 @@
 {
   "name": "user_manager_mongoose_front",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,7 +10,7 @@
   "dependencies": {
     "@moreillon/vue_application_template_vuetify": "^0.3.6",
     "axios": "^0.21.1",
-    "core-js": "^3.6.5",
+    "core-js": "^3.16.1",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.4",
     "vue-cookies": "^1.7.4",

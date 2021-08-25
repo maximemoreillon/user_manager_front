@@ -129,7 +129,7 @@ export default {
         username: null,
         password: null,
         password_confirm: null,
-        email_address: null,
+        email_address: undefined,
       },
 
 

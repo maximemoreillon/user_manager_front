@@ -46,7 +46,7 @@
         </v-form>
       </v-card-text>
 
-      <v-card-text>
+      <v-card-text v-if="registration_allowed">
         <v-row justify="center">
           <v-col
             class="text-center">
@@ -87,6 +87,7 @@ export default {
   name: 'Login',
   data(){
     return {
+      registration_allowed: false,
       form_valid: false,
       snackbar: false,
       snackbar_text: '',
@@ -99,6 +100,7 @@ export default {
     }
   },
   mounted(){
+    this.check_if_registration_possible()
   },
   methods: {
     login(){
@@ -132,6 +134,14 @@ export default {
       })
       .finally(() => {this.processing = false})
     },
+    check_if_registration_possible(){
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/`
+      this.axios.get(url)
+      .then( ({data: {registration_allowed}}) => {
+        this.registration_allowed = registration_allowed
+      })
+      .catch( console.error)
+    }
   }
 
 }

@@ -117,7 +117,6 @@ export default {
   data: () => ({
     drawer: null,
     nav: [
-      //{title: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
       {title: 'Profile', icon: 'mdi-account', to: {name: 'user', params: {user_id: 'self'}}},
       {title: 'Info', icon: 'mdi-information-outline', to: {name: 'info', params: {}}},
     ],
@@ -129,8 +128,7 @@ export default {
     logout(){
 
       delete this.axios.defaults.headers.common['Authorization']
-      //this.$cookies.remove('token')
-      localStorage.removeItem('jwt')
+      this.$cookie.delete('token')
       this.$router.push({name: 'login'})
     }
   },

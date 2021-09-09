@@ -5,9 +5,9 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-// import VueCookies from 'vue-cookies'
+import VueCookie from 'vue-cookie'
 
-// Vue.use(VueCookies)
+Vue.use(VueCookie)
 Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false
@@ -17,9 +17,7 @@ Vue.config.productionTip = false
 function destroy_session(){
   delete Vue.axios.defaults.headers.common['Authorization']
   store.commit('set_current_user', null)
-  //Vue.$cookies.remove('token')
-  localStorage.removeItem('jwt')
-
+  VueCookie.delete('token')
 }
 
 
@@ -27,9 +25,8 @@ router.beforeEach((to, from, next) => {
 
   const anonymous_routes = ["login","register","password_reset", "activate"]
 
+  const token = VueCookie.get('token')
 
-  //const token = Vue.$cookies.get("token")\
-  const token = localStorage.jwt
 
   if(token) {
     Vue.axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
@@ -43,8 +40,6 @@ router.beforeEach((to, from, next) => {
       destroy_session()
 
       if(anonymous_routes.includes(to.name)) return next()
-
-
 
       if (to.name !== 'login') next({ name: 'login' })
       else next()

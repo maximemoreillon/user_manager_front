@@ -281,7 +281,7 @@ export default {
       return Object.keys(this.modified_properties).length > 0
     },
     token(){
-      return localStorage.jwt
+      return this.$cookie.get('token') || localStorage.jwt
     }
   }
 

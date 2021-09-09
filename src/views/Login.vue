@@ -60,9 +60,6 @@
     </v-card>
 
 
-
-
-
     <v-snackbar
       color="#C00000"
       dark
@@ -78,8 +75,6 @@
         </v-btn>
       </template>
     </v-snackbar>
-
-
 
 
   </div>
@@ -117,8 +112,14 @@ export default {
         this.axios.defaults.headers.common['Authorization'] = `Bearer ${jwt}`
 
         // Set cookies
-        //this.$cookies.set('token', jwt, '14d', null, process.env.VUE_APP_COOKIE_DOMAIN, null, 'Strict')
-        localStorage.jwt = jwt
+
+        const cookie_options = {
+          secure: location.protocol === 'https:',
+          samesite: 'Strict',
+          expires: '1M',
+        }
+
+        this.$cookie.set('token',jwt, cookie_options)
 
         // Redirect
         this.$router.push({name: 'user', params: {user_id: 'self'}})

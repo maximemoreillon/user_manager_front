@@ -2,10 +2,49 @@
   <div class="home">
     <h1>User list</h1>
 
-    <UserPreview
+    <div class="list_header">
+      <span>{{users.length}} user(s)</span>
+      <span class="spacer"></span>
+      <input type="text" v-model="search" placeholder="Search">
+    </div>
+
+    <div class="table_wrapper">
+      <table>
+
+        <tr>
+          <th></th>
+          <th>Username</th>
+          <th>Display name</th>
+          <th>admin</th>
+        </tr>
+        <tr
+          v-for="(user, index) in filtered_users"
+          v-bind:key="`user_${index}`">
+          <td>
+            <img
+              :src="user.properties.avatar_src || require('@/assets/account.png')">
+          </td>
+          <td>
+            <router-link
+              :to="{ name: 'user_details', params: {user_id: user.identity} }">
+              {{user.properties.username}}
+            </router-link>
+          </td>
+          <td>
+            {{user.properties.display_name}}
+          </td>
+          <td>
+            {{user.properties.isAdmin}}
+          </td>
+        </tr>
+      </table>
+
+    </div>
+
+    <!-- <UserPreview
       v-for="(user, index) in users"
       v-bind:key="`user_${index}`"
-      v-bind:user="user"/>
+      v-bind:user="user"/> -->
 
 
 
@@ -14,17 +53,18 @@
 
 <script>
 // @ is an alias to /src
-import UserPreview from '@/components/UserPreview.vue'
+//import UserPreview from '@/components/UserPreview.vue'
 import {authentication} from '@/mixins/authentication.js'
 
 export default {
   name: 'Home',
   components: {
-    UserPreview
+    //UserPreview
   },
   data(){
     return {
-      users: []
+      users: [],
+      search: '',
     }
   },
   mixins: [
@@ -40,7 +80,69 @@ export default {
       this.axios.get(url, options)
       .then(({data}) => { this.users = data })
       .catch( error => console.log(error))
+    },
+    avatar_src(user){
+      //return user.properties.avatar_src || require('@/assets/account.svg')
+      console.log(user)
+      return require('@/assets/account.svg')
+    }
+
+  },
+  computed: {
+    filtered_users(){
+      if(this.search === '') return this.users
+      return this.users.filter(u => {
+        const username_lower = u.properties.username.toLowerCase()
+        const display_name_lower = u.properties.display_name.toLowerCase()
+
+        return username_lower.includes(this.search.toLowerCase())
+          || display_name_lower.includes(this.search.toLowerCase())
+
+      })
     }
   }
 }
 </script>
+
+<style scoped>
+
+.list_header {
+  margin: 2em 0;
+  display: flex;
+  align-items: center;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+.list_header > *+* {
+  margin-left: 3em;
+}
+
+input[type="text"] {
+  flex-grow: 1;
+  border: none;
+  border-bottom: 1px solid grey;
+  padding: 0.5em;
+
+}
+
+table {
+  text-align: center;
+}
+
+td a {
+  color: inherit;
+  //text-decoration: none;
+  //font-weight: bold;
+}
+
+td img {
+  height: 2em;
+  width: 2em;
+}
+
+td a:hover {
+  color: #c00000;
+}
+</style>

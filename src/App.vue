@@ -76,6 +76,12 @@ export default {
 
 
 <style>
+main > * {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;

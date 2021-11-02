@@ -27,7 +27,7 @@ containerization:
     - docker image rm ${CONTAINER_IMAGE_TAGGED}
 
 deployment:
-  stage: deploy
+  stage: deployment
   tags:
     - moreillon
   script:

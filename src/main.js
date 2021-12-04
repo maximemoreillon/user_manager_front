@@ -23,7 +23,7 @@ function destroy_session(){
 
 router.beforeEach((to, from, next) => {
 
-  const anonymous_routes = ["login","register","password_reset", "activate"]
+  const anonymous_routes = ["login","register","password_reset", "activate", "password_update"]
 
   const token = VueCookie.get('token')
 

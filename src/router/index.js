@@ -19,7 +19,6 @@ const routes = [
     name: 'register',
     component: () => import('@/views/Register.vue'),
   },
-
   {
     path: '/users',
     name: 'users',
@@ -29,6 +28,16 @@ const routes = [
     path: '/users/:user_id',
     name: 'user',
     component: User,
+  },
+  {
+    path: '/password_update',
+    name: 'password_update',
+    component: () => import('@/views/PasswordUpdate.vue'),
+  },
+  {
+    path: '/password_reset',
+    name: 'password_reset',
+    component: () => import('@/views/PasswordResetRequest.vue'),
   },
   {
     path: '/activate',

@@ -1,33 +1,31 @@
 <template>
-  <div>
-    <v-card
-      class="mx-auto py-3 mt-12"
-      max-width="500px">
-      <v-card-title>Account activation</v-card-title>
+  <v-card
+    class="mx-auto py-3 mt-12"
+    max-width="500px">
+    <v-card-title>Account activation</v-card-title>
 
-      <v-card-text
-        class="text-center"
-        v-if="processing">
-        <v-progress-circular indeterminate></v-progress-circular>
-      </v-card-text>
+    <v-card-text
+      class="text-center"
+      v-if="processing">
+      <v-progress-circular indeterminate></v-progress-circular>
+    </v-card-text>
 
 
-      <v-card-text v-else-if="success">
-        Activation successful, click <router-link :to="{ name: 'login' }">here</router-link> to login
-      </v-card-text>
+    <v-card-text v-else-if="success">
+      Activation successful, click <router-link :to="{ name: 'login' }">here</router-link> to login
+    </v-card-text>
 
-      <v-card-text v-else-if="error">
-        Activation failed
-      </v-card-text>
-
+    <v-card-text v-else-if="error">
+      Activation failed
+    </v-card-text>
 
 
 
 
 
 
-    </v-card>
-  </div>
+
+  </v-card>
 </template>
 
 <script>

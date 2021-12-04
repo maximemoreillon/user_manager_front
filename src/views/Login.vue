@@ -54,6 +54,14 @@
           </v-col>
         </v-row>
       </v-card-text>
+      <v-card-text>
+        <v-row justify="center">
+          <v-col
+            class="text-center">
+            Forgotten password? click <router-link :to="{ name: 'password_reset' }">here</router-link> to reset it.
+          </v-col>
+        </v-row>
+      </v-card-text>
 
 
 

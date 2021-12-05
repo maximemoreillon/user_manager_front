@@ -10,7 +10,7 @@ variables:
 build:
   stage: build
   tags:
-    - moreillon
+    - dind
   only:
     - master
   script:

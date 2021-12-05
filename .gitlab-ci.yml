@@ -7,6 +7,10 @@ variables:
   CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
 
+# Needed for Docker in docker build
+services:
+  - name: docker:19.03.12-dind
+
 build:
   stage: build
   tags:

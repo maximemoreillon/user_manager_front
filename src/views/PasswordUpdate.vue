@@ -26,7 +26,9 @@
           <v-row>
             <v-spacer/>
             <v-col cols="auto">
-              <v-btn type="submit">
+              <v-btn
+                :loading="loading"
+                type="submit">
                 Set password
               </v-btn>
             </v-col>

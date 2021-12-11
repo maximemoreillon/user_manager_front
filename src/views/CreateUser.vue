@@ -49,6 +49,7 @@
 
 <script>
 import {authentication} from '@/mixins/authentication.js'
+import IdUtils from '@/mixins/IdUtils.js'
 
 export default {
   name: 'CreateUser',
@@ -57,6 +58,7 @@ export default {
   },
   mixins: [
     authentication,
+    IdUtils,
   ],
   data(){
     return {
@@ -75,11 +77,13 @@ export default {
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
       const body = {
         username: this.username,
-        password: this.password
+        password: this.password,
+        password_confirm: this.password_confirm,
       }
       this.axios.post(url, body)
       .then(({data}) => {
-        this.$router.push({name: 'user_details', query: {id: data.identity}})
+        const user_id = this.get_id_of_item(data)
+        this.$router.push({name: 'user_details', params: {user_id}})
        })
       .catch( (error) => {
         if(error.response) {

@@ -1,9 +1,14 @@
+import IdUtils from './IdUtils.js'
+
 export const authentication = {
+  mixins: [IdUtils],
   methods: {
     user_is_current_user(user){
       if(!user) return false
-      if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user.identity === user.identity
+      const current_user = this.$store.state.current_user
+      if(!current_user) return false
+
+      return this.get_id_of_item(current_user) === this.get_id_of_item(user)
     }
   },
   computed: {
@@ -11,10 +16,6 @@ export const authentication = {
       if(!this.$store.state.current_user) return false
       else return this.$store.state.current_user.properties.isAdmin
     },
-    current_user_id(){
-      return this.$store.state.current_user.identity.low
-        || this.$store.state.current_user.identity
-    }
 
   }
 };

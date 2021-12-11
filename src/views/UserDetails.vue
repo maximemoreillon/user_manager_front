@@ -23,7 +23,7 @@
 
         <tr>
           <td>User ID</td>
-          <td>{{user.identity}}</td>
+          <td>{{get_id_of_item(user)}}</td>
         </tr>
 
         <tr>
@@ -97,7 +97,10 @@
           <tr>
             <td>User token</td>
             <td>
-              <input type="text" :value="$cookies.get('jwt')" readonly>
+              <input
+                type="text"
+                :value="$cookies.get('jwt')"
+                 readonly>
             </td>
           </tr>
         </template>
@@ -143,14 +146,6 @@
           :value="user.properties.username">
 
         <table>
-          <tr v-if="!current_user_is_admin">
-            <td>Current password</td>
-            <td>
-              <input
-                type="password"
-                v-model="current_password"
-                placeholder="Current password">
-            </td>
           <tr>
             <td>New password</td>
             <td>
@@ -208,6 +203,7 @@
 //import HelloWorld from '@/components/HelloWorld.vue'
 import {authentication} from '@/mixins/authentication.js'
 import {avatar_src} from '@/mixins/avatar_src.js'
+import IdUtils from '@/mixins/IdUtils.js'
 
 export default {
   name: 'UserDetails',
@@ -216,7 +212,8 @@ export default {
   },
   mixins: [
     authentication,
-    avatar_src
+    avatar_src,
+    IdUtils
   ],
   data(){
     return {
@@ -264,7 +261,7 @@ export default {
 
     patch_user(){
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.use_id}`
       const body = this.modified_properties
 
       this.axios.patch(url, body)
@@ -282,19 +279,17 @@ export default {
     password_update(){
       if(this.password_invalid) return alert ('Invalid new password')
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity}/password`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}/password`
 
       this.axios.put(url, {
         new_password: this.new_password,
         new_password_confirm: this.new_password_confirm,
-        current_password: this.current_password
       })
       .then( () => {
         // clear inputs
 
         this.new_password = ''
         this.new_password_confirm = ''
-        this.current_password = ''
 
         // Inform user
         alert('Password updated successfully')
@@ -316,7 +311,7 @@ export default {
     delete_user(){
       if(!confirm('really?')) return
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user.identity}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}`
       this.axios.delete(url)
       .then( () => {
         this.$router.push({name: 'user_list'})
@@ -363,6 +358,9 @@ export default {
 
   },
   computed: {
+    user_id(){
+      return this.$route.params.user_id
+    },
     passwords_mismatch(){
       return this.new_password != this.new_password_confirm
     },

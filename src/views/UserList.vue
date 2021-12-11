@@ -26,7 +26,7 @@
           </td>
           <td>
             <router-link
-              :to="{ name: 'user_details', params: {user_id: user.identity} }">
+              :to="{ name: 'user_details', params: {user_id: get_id_of_item(user)} }">
               {{user.properties.username}}
             </router-link>
           </td>
@@ -55,6 +55,7 @@
 // @ is an alias to /src
 //import UserPreview from '@/components/UserPreview.vue'
 import {authentication} from '@/mixins/authentication.js'
+import IdUtils from '@/mixins/IdUtils.js'
 
 export default {
   name: 'Home',
@@ -69,6 +70,7 @@ export default {
   },
   mixins: [
     authentication,
+    IdUtils,
   ],
   mounted(){
     this.get_user_list()

@@ -14,6 +14,7 @@
 
 <script>
 import {avatar_src} from '@/mixins/avatar_src.js'
+import IdUtils from '@/mixins/IdUtils.js'
 
 export default {
   name: 'UserPreview',
@@ -22,6 +23,7 @@ export default {
   },
   mixins: [
     avatar_src,
+    IdUtils,
   ],
   computed: {
     user_displayed_name(){
@@ -33,7 +35,7 @@ export default {
         || properties.name_kanji
     },
     user_id(){
-      return this.user.identity
+      return this.get_id_of_item(this.user)
     }
   }
 }

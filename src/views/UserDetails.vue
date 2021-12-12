@@ -261,7 +261,7 @@ export default {
 
     patch_user(){
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.use_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}`
       const body = this.modified_properties
 
       this.axios.patch(url, body)

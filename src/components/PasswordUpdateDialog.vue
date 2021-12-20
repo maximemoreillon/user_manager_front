@@ -61,57 +61,61 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+
   </v-dialog>
 </template>
 
 <script>
-  export default {
-    name: 'PasswordUpdateDialog',
 
-    data(){
-      return {
-        dialog: false,
-        new_password: null,
-        new_password_confirm: null,
-        form_valid: false,
-        passwordRules: [
-          v => !!v || 'Password is required',
-          v => (v && v.length >= 5) || 'Password must be more than 5 characters',
-        ],
-        passwordConfirmRules: [
-          v => !!v || 'Password confirm is required',
-          v => v === this.new_password || 'Passwords must match',
-        ],
-      }
-    },
-    methods: {
-      update_pasword(){
-        if(this.new_password !== this.new_password_confirm) return alert('Password confirm does not match')
-        const user_id = this.$route.params.user_id || 'self'
-        const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}/password`
-        const {new_password, new_password_confirm} = this
-        const body = { new_password, new_password_confirm}
-        this.axios.put(url,body)
-        .then( () => {
-          this.clear_password_update()
-          //this.sucess_message('Password updated successfully')
-         })
-        .catch( error => {
-          console.error(error)
-          alert(`Failed tu update password`)
-          // if(error.response) this.error_message(error.response.data)
-          // else this.error_message(`Error updating password`)
-        })
+export default {
+  name: 'PasswordUpdateDialog',
 
-      },
-      clear_password_update(){
-        this.new_password = ''
-        this.mew_password_confirm = ''
-        this.dialog = false
-      },
-    },
-    computed: {
-
+  data(){
+    return {
+      dialog: false,
+      new_password: null,
+      new_password_confirm: null,
+      form_valid: false,
+      passwordRules: [
+        v => !!v || 'Password is required',
+        v => (v && v.length >= 5) || 'Password must be more than 5 characters',
+      ],
+      passwordConfirmRules: [
+        v => !!v || 'Password confirm is required',
+        v => v === this.new_password || 'Passwords must match',
+      ],
     }
+  },
+  methods: {
+    update_pasword(){
+      if(this.new_password !== this.new_password_confirm) return alert('Password confirm does not match')
+      const user_id = this.$route.params.user_id || 'self'
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}/password`
+      const {new_password, new_password_confirm} = this
+      const body = { new_password, new_password_confirm}
+      this.axios.put(url,body)
+      .then( () => {
+        this.$emit('passwordUpdated')
+        this.clear_password_update()
+        this.dialog = false
+        //this.sucess_message('Password updated successfully')
+       })
+      .catch( error => {
+        console.error(error)
+        alert(`Failed tu update password`)
+        // if(error.response) this.error_message(error.response.data)
+        // else this.error_message(`Error updating password`)
+      })
+
+    },
+    clear_password_update(){
+      this.new_password = ''
+      this.mew_password_confirm = ''
+
+    },
+  },
+  computed: {
+
   }
+}
 </script>

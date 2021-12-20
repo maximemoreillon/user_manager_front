@@ -1,6 +1,6 @@
 {
   "name": "user_manager_mongoose_front",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "axios": "^0.21.4",
-    "core-js": "^3.19.2",
+    "core-js": "^3.20.0",
     "vue": "^2.6.11",
     "vue-axios": "^3.4.0",
     "vue-cookie": "^1.1.4",
@@ -24,9 +24,9 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "sass": "^1.44.0",
+    "sass": "^1.45.0",
     "sass-loader": "^10.0.0",
-    "vue-cli-plugin-vuetify": "^2.4.4",
+    "vue-cli-plugin-vuetify": "^2.4.5",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.7.3"
   }

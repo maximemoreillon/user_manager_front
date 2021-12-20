@@ -20,8 +20,7 @@
         transition="scale-transition"
         width="40" />
 
-        <!-- class="text-no-wrap" to prevent ellipsis (vuetify bug) -->
-      <v-app-bar-title>Account manager</v-app-bar-title>
+      <v-toolbar-title>Account manager</v-toolbar-title>
 
       <v-spacer />
 

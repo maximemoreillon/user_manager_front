@@ -7,12 +7,10 @@
 
       <v-img
         contain
-        :src="user.avatar || require('@/assets/account.svg')"
+        :src="user.avatar_src || require('@/assets/account.svg')"
         height="300px"/>
 
-      <v-card-title>
-        {{user.username}}
-      </v-card-title>
+      <v-card-title>{{user.username}}</v-card-title>
 
       <v-card-subtitle v-if="user_is_current_user">
         it's you!
@@ -22,7 +20,7 @@
 
         <v-list-item>
           <v-list-item-content>
-            <div class="caption">ID</div>
+            <div class="caption">User ID</div>
             <div>{{user._id}}</div>
           </v-list-item-content>
         </v-list-item>
@@ -61,7 +59,7 @@
           <v-list-item-content>
             <v-text-field
               label="Avatar URL"
-              v-model="user.avatar" />
+              v-model="user.avatar_src" />
           </v-list-item-content>
         </v-list-item>
 
@@ -104,7 +102,8 @@
           v-if="current_user_is_admin || user_is_current_user">
           <v-list-item-content>Password update</v-list-item-content>
           <v-list-item-action>
-            <PasswordUpdateDialog />
+            <PasswordUpdateDialog
+              @passwordUpdated="sucess_message('Password successfully updated')"/>
           </v-list-item-action>
         </v-list-item>
 

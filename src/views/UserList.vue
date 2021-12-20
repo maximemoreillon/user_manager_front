@@ -3,7 +3,7 @@
     <h1>User list</h1>
 
     <div class="list_header">
-      <span>{{users.length}} user(s)</span>
+      <span>{{user_count}} user(s)</span>
       <span class="spacer"></span>
       <input type="text" v-model="search" placeholder="Search">
     </div>
@@ -22,19 +22,19 @@
           v-bind:key="`user_${index}`">
           <td>
             <img
-              :src="user.properties.avatar_src || require('@/assets/account.png')">
+              :src="user.avatar_src || require('@/assets/account.png')">
           </td>
           <td>
             <router-link
               :to="{ name: 'user_details', params: {user_id: get_id_of_item(user)} }">
-              {{user.properties.username}}
+              {{user.username}}
             </router-link>
           </td>
           <td>
-            {{user.properties.display_name}}
+            {{user.display_name}}
           </td>
           <td>
-            {{user.properties.isAdmin}}
+            {{user.isAdmin}}
           </td>
         </tr>
       </table>
@@ -64,6 +64,7 @@ export default {
   },
   data(){
     return {
+      user_count: null,
       users: [],
       search: '',
     }
@@ -77,16 +78,18 @@ export default {
   },
   methods: {
     get_user_list(){
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/v2/users`
       const options = {params: {}}
       this.axios.get(url, options)
-      .then(({data}) => { this.users = data })
+      .then(({data}) => {
+        this.user_count = data.count
+        this.users = data.users
+       })
       .catch( error => console.log(error))
     },
     avatar_src(user){
-      //return user.properties.avatar_src || require('@/assets/account.svg')
-      console.log(user)
-      return require('@/assets/account.svg')
+      if(!user.avatar_src) return require('@/assets/account.svg')
+      return user.avatar_src
     }
 
   },
@@ -94,7 +97,7 @@ export default {
     filtered_users(){
       if(this.search === '') return this.users
       return this.users.filter(u => {
-        const username_lower = u.properties.username.toLowerCase()
+        const username_lower = u.username.toLowerCase()
         const display_name_lower = u.properties.display_name.toLowerCase()
 
         return username_lower.includes(this.search.toLowerCase())

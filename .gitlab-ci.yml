@@ -1,6 +1,6 @@
 stages:
-  - containerization
-  - deployment
+  - build
+  - deploy
 
 variables:
   APPLICATION_NAME: user-manager-front
@@ -12,10 +12,10 @@ image: moreillon/ci-dind
 services:
   - name: docker:19.03.12-dind
 
-containerization:
-  stage: containerization
+build:
+  stage: build
   tags:
-    - moreillon
+    - dind
   script:
     # Docker hub login
     - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
@@ -30,8 +30,8 @@ containerization:
     - docker image rm ${CONTAINER_IMAGE}
     - docker image rm ${CONTAINER_IMAGE_TAGGED}
 
-deployment:
-  stage: deployment
+deploy:
+  stage: deploy
   tags:
     - dind
   script:

@@ -8,6 +8,10 @@ variables:
   CONTAINER_IMAGE_TAGGED: ${DOCKER_HUB_USERNAME}/${APPLICATION_NAME}:${CI_COMMIT_SHORT_SHA}
   CERTIFICATE_DOMAIN: users.maximemoreillon.com
 
+image: moreillon/ci-dind
+services:
+  - name: docker:19.03.12-dind
+
 containerization:
   stage: containerization
   tags:
@@ -29,7 +33,7 @@ containerization:
 deployment:
   stage: deployment
   tags:
-    - moreillon
+    - dind
   script:
     # Apply manifest
     - envsubst < kubernetes_manifest.yml | kubectl apply -f -

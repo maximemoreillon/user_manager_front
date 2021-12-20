@@ -6,13 +6,18 @@
       <v-card-title>Password update</v-card-title>
 
       <v-card-text v-if="!success">
-        <v-form @submit.prevent="update_password()">
+        <v-form
+          @submit.prevent="update_password()"
+          lazy-validation
+          v-model="form_valid">
           <v-row>
             <v-col>
               <v-text-field
                 type="password"
                 label="New password"
-                v-model="new_password"/>
+                v-model="new_password"
+                :rules="passwordRules"
+                required/>
             </v-col>
           </v-row>
           <v-row>
@@ -20,13 +25,16 @@
               <v-text-field
                 type="password"
                 label="Password confirm"
-                v-model="new_password_confirm"/>
+                v-model="new_password_confirm"
+                :rules="passwordConfirmRules"
+                required/>
             </v-col>
           </v-row>
           <v-row>
             <v-spacer/>
             <v-col cols="auto">
               <v-btn
+                :disabled="!form_valid"
                 :loading="loading"
                 type="submit">
                 Set password
@@ -62,6 +70,15 @@ export default {
       new_password_confirm: null,
       loading: false,
       success: false,
+      form_valid: false,
+      passwordRules: [
+        v => !!v || 'Password is required',
+        v => (v && v.length >= 5) || 'Password must be more than 5 characters',
+      ],
+      passwordConfirmRules: [
+        v => !!v || 'Password confirm is required',
+        v => v === this.new_password || 'Passwords must match',
+      ],
 
     }
   },
@@ -69,6 +86,7 @@ export default {
   },
   methods: {
     update_password(){
+      if(this.new_password !== this.new_password_confirm) return alert('Password confirm does not match')
       this.loading = true
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self/password`
       const token = this.$route.query.token

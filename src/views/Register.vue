@@ -108,10 +108,13 @@
 </template>
 
 <script>
-// @ is an alias to /src
+import CurrentUser from '@/mixins/CurrentUser.js'
 
 export default {
   name: 'Login',
+  mixins: [
+    CurrentUser
+  ],
   data(){
     return {
       form_valid: false,
@@ -186,13 +189,7 @@ export default {
     }
   },
   computed: {
-    current_user(){
-      return this.$store.state.current_user
-    },
-    current_user_is_admin(){
-      if(!this.current_user) return false
-      return this.$store.state.current_user.administrator
-    }
+
   }
 
 }

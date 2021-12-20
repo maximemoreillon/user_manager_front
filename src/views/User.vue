@@ -78,7 +78,7 @@
           <v-list-item-action>
             <v-switch
               :disabled="user_is_current_user || !current_user_is_admin"
-              v-model="user.administrator"/>
+              v-model="user.isAdmin"/>
           </v-list-item-action>
         </v-list-item>
 
@@ -154,9 +154,13 @@
 
 <script>
 import PasswordUpdateDialog from '@/components/PasswordUpdateDialog.vue'
+import CurrentUser from '@/mixins/CurrentUser.js'
 
 export default {
   name: 'User',
+  mixins: [
+    CurrentUser
+  ],
   components: {
     PasswordUpdateDialog,
   },
@@ -246,15 +250,10 @@ export default {
     },
     user_is_current_user(){
       if(this.$route.params.user_id === 'self') return true
-      if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user._id === this.user_id
-    },
-    current_user_is_admin(){
-      if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user.administrator
+      return this.current_user_id === this.user_id
     },
     modified_properties(){
-      // Note: Neo4J does not have nested properties
+      // Note: This does not look deeply into properties
 
       if(!this.user) return {}
 

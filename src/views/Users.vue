@@ -14,6 +14,7 @@
       <!-- <UserCreateDialog
         @user_created="user_created($event)"/> -->
     </v-toolbar>
+    <v-divider />
 
     <v-card-text>
 
@@ -22,12 +23,11 @@
         :headers="headers"
         :items="users"
         :options.sync="options"
-        :server-items-length="user_count"
-        @click:row="row_clicked($event)">
+        @click:row="row_clicked($event)"
+        :server-items-length="user_count" >
 
         <template v-slot:top>
-          <v-toolbar
-            flat>
+          <v-toolbar flat>
 
             <v-spacer/>
 
@@ -35,12 +35,7 @@
               v-model="search"
               append-icon="mdi-magnify"
               label="Search"
-              single-line
-              hide-details/>
-
-
-
-
+              single-line />
 
           </v-toolbar>
         </template>
@@ -54,8 +49,8 @@
         </template>
 
         <!-- Boolean properties -->
-        <template v-slot:item.administrator="{ item }">
-          <v-icon v-if="item.administrator">mdi-check</v-icon>
+        <template v-slot:item.isAdmin="{ item }">
+          <v-icon v-if="item.isAdmin">mdi-check</v-icon>
         </template>
         <template v-slot:item.activated="{ item }">
           <v-icon v-if="item.activated">mdi-check</v-icon>
@@ -66,10 +61,6 @@
       </v-data-table>
 
     </v-card-text>
-
-
-
-
 
 
     <v-snackbar
@@ -88,27 +79,34 @@
       </template>
 
     </v-snackbar>
+
   </v-card>
 </template>
 
 <script>
 // import UserCreateDialog from '@/components/UserCreateDialog.vue'
+import CurrentUser from '@/mixins/CurrentUser.js'
 
 export default {
   name: 'Users',
+  mixins: [
+    CurrentUser
+  ],
   components: {
     // UserCreateDialog
   },
   data(){
     return {
       users: [],
+
       user_count: 0,
+
       options: {},
       headers: [
         {text: 'Avatar', value:'avatar'},
         {text: 'Username', value:'username'},
         {text: 'Display name', value:'display_name'},
-        {text: 'Administrator', value:'administrator'},
+        {text: 'Administrator', value:'isAdmin'},
         {text: 'Activated', value:'activated'},
         {text: 'Locked', value:'locked'},
       ],
@@ -123,9 +121,7 @@ export default {
     }
   },
   mounted(){
-    //this.get_users()
-    this.get_user_count()
-    // Get user count will get users later on
+    this.get_users()
   },
   watch: {
     options: {
@@ -136,20 +132,7 @@ export default {
     },
   },
   methods: {
-    get_user_count(){
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/count`
-      this.axios.get(url)
-      .then( ({data}) => {
-        this.user_count = data.user_count
 
-        // Not elegant
-        this.get_users()
-      })
-      .catch( error => {
-        console.error(error)
-      })
-
-    },
     get_users(){
       this.loading = true
       const { page, itemsPerPage } = this.options
@@ -161,11 +144,9 @@ export default {
       }
       this.axios.get(url, {params})
       .then( ({data}) => {
-        // Is this right?
-        this.users = []
-        data.forEach((user) => {
-          this.users.push(user)
-        })
+
+        this.users = data.users
+        this.user_count = data.count
 
       })
       .catch( error => {
@@ -190,13 +171,9 @@ export default {
     user_is_current_user(){
       const user_id = this.$route.params.user_id
       if(!user_id) return true
-      if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user._id === user_id
+      return this.current_user_id === user_id
     },
-    current_user_is_admin(){
-      if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user.administrator
-    },
+
   }
 }
 </script>

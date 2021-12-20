@@ -21,7 +21,7 @@
         width="40" />
 
         <!-- class="text-no-wrap" to prevent ellipsis (vuetify bug) -->
-      <v-app-bar-title>User manager</v-app-bar-title>
+      <v-app-bar-title>Account manager</v-app-bar-title>
 
       <v-spacer />
 
@@ -111,9 +111,13 @@
 
 <script>
 
+import CurrentUser from '@/mixins/CurrentUser.js'
+
 export default {
   name: 'App',
-
+  mixins: [
+    CurrentUser
+  ],
   data: () => ({
     drawer: null,
     nav: [
@@ -133,10 +137,7 @@ export default {
     }
   },
   computed: {
-    current_user_is_admin(){
-      if(!this.$store.state.current_user) return false
-      return this.$store.state.current_user.administrator
-    },
+
   }
 
 };

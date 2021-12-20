@@ -19,6 +19,7 @@
             <v-spacer/>
             <v-col cols="auto">
               <v-btn
+                :disabled="!email_address"
                 :loading="loading"
                 type="submit">
                 Request reset

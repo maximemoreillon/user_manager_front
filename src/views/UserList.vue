@@ -38,13 +38,18 @@
           </td>
         </tr>
       </table>
-
     </div>
 
-    <!-- <UserPreview
-      v-for="(user, index) in users"
-      v-bind:key="`user_${index}`"
-      v-bind:user="user"/> -->
+    <div class="load_more_wrapper">
+      <button
+        v-if="can_load_more && !loading"
+        type="button"
+        @click="get_users()">
+        Load more
+      </button>
+      <Loader v-if="loading"/>
+    </div>
+
 
 
 
@@ -56,14 +61,16 @@
 //import UserPreview from '@/components/UserPreview.vue'
 import {authentication} from '@/mixins/authentication.js'
 import IdUtils from '@/mixins/IdUtils.js'
+import Loader from '@moreillon/vue_loader'
 
 export default {
   name: 'Home',
   components: {
-    //UserPreview
+    Loader
   },
   data(){
     return {
+      loading: false,
       user_count: null,
       users: [],
       search: '',
@@ -74,18 +81,20 @@ export default {
     IdUtils,
   ],
   mounted(){
-    this.get_user_list()
+    this.get_users()
   },
   methods: {
-    get_user_list(){
+    get_users(){
+      this.loading = true
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/v2/users`
-      const options = {params: {}}
+      const options = {params: {start_index: this.users.length}}
       this.axios.get(url, options)
       .then(({data}) => {
         this.user_count = data.count
-        this.users = data.users
+        this.users = [...this.users, ...data.users]
        })
       .catch( error => console.log(error))
+      .finally( () => { this.loading = false })
     },
     avatar_src(user){
       if(!user.avatar_src) return require('@/assets/account.svg')
@@ -104,6 +113,9 @@ export default {
           || display_name_lower.includes(this.search.toLowerCase())
 
       })
+    },
+    can_load_more(){
+      return this.users.length < this.user_count
     }
   }
 }
@@ -150,4 +162,10 @@ td img {
 td a:hover {
   color: #c00000;
 }
+
+.load_more_wrapper {
+  margin-top: 2em;
+  text-align: center;
+}
+
 </style>

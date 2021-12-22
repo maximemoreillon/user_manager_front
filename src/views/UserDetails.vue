@@ -1,7 +1,7 @@
 <template>
   <div class="user_details">
 
-    <h1 v-if="user">{{user.properties.username}}</h1>
+    <h1 v-if="user">{{user.username}}</h1>
     <h1 v-else>User info</h1>
     <p v-if="user_is_current_user(user)">(It's you)</p>
 
@@ -18,7 +18,7 @@
 
         <tr>
           <td>Username</td>
-          <td>{{user.properties.username}}</td>
+          <td>{{user.username}}</td>
         </tr>
 
         <tr>
@@ -29,7 +29,7 @@
         <tr>
           <td>E-mail address</td>
           <td>
-            <input type="email" v-model="user.properties.email_address">
+            <input type="email" v-model="user.email_address">
           </td>
         </tr>
 
@@ -38,21 +38,21 @@
         <tr>
           <td>First name</td>
           <td>
-            <input type="text" v-model="user.properties.first_name">
+            <input type="text" v-model="user.first_name">
           </td>
         </tr>
 
         <tr>
           <td>Last name</td>
           <td>
-            <input type="text" v-model="user.properties.last_name">
+            <input type="text" v-model="user.last_name">
           </td>
         </tr>
 
         <tr>
           <td>Display name</td>
           <td>
-            <input type="text" v-model="user.properties.display_name">
+            <input type="text" v-model="user.display_name">
           </td>
         </tr>
         <tr>
@@ -66,7 +66,7 @@
             <input
               v-else
               type="text"
-              v-model="user.properties.avatar_src">
+              v-model="user.avatar_src">
           </td>
         </tr>
 
@@ -75,7 +75,7 @@
           <td>
             <input
               type="checkbox"
-              v-model="user.properties.isAdmin"
+              v-model="user.isAdmin"
               v-bind:disabled="!current_user_is_admin || user_is_current_user(user)">
               <span v-if="current_user_is_admin && user_is_current_user(user)">
                 Cannot remove one's own admin rights
@@ -85,8 +85,8 @@
 
         <tr v-if="current_user_is_admin">
           <td>Last login</td>
-          <td v-if="user.properties.last_login">
-            {{format_date_neo4j(user.properties.last_login)}}
+          <td v-if="user.last_login">
+            {{format_date_neo4j(user.last_login)}}
           </td>
           <td v-else>Never</td>
         </tr>
@@ -143,7 +143,7 @@
           type="text"
           autocomplete="username"
           placeholder="username"
-          :value="user.properties.username">
+          :value="user.username">
 
         <table>
           <tr>
@@ -246,12 +246,10 @@ export default {
         || this.$route.query.id
         || 'self'
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${user_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/v2/users/${user_id}`
       this.axios.get(url)
       .then(response => {
         this.user = response.data
-        // passwords should not be messed with
-        delete this.user.properties.password_hashed
 
         this.save_copy_of_user()
       })
@@ -261,11 +259,12 @@ export default {
 
     patch_user(){
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/v2/users/${this.user_id}`
       const body = this.modified_properties
 
       this.axios.patch(url, body)
       .then(() => {
+        this.save_copy_of_user()
         alert(`User data updated successfully`)
       })
       .catch(error => {
@@ -279,7 +278,7 @@ export default {
     password_update(){
       if(this.password_invalid) return alert ('Invalid new password')
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}/password`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/v2/users/${this.user_id}/password`
 
       this.axios.put(url, {
         new_password: this.new_password,
@@ -311,7 +310,7 @@ export default {
     delete_user(){
       if(!confirm('really?')) return
 
-      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/${this.user_id}`
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/v2/users/${this.user_id}`
       this.axios.delete(url)
       .then( () => {
         this.$router.push({name: 'user_list'})
@@ -343,7 +342,7 @@ export default {
       .then(response => {
         const image_id = response.data._id
         const src = `${process.env.VUE_APP_IMAGE_MANAGER_API_URL}/images/${image_id}`
-        this.user.properties.avatar_src = src
+        this.user.avatar_src = src
 
       })
       .catch(error => {
@@ -373,12 +372,12 @@ export default {
     modified_properties(){
       if(!this.user) return
 
-      const current_user_keys = Object.keys(this.user.properties)
+      const current_user_keys = Object.keys(this.user)
 
       return current_user_keys.reduce( (acc, key) => {
 
-        const current_value = this.user.properties[key]
-        const original_value = this.unmodified_user_copy.properties[key]
+        const current_value = this.user[key]
+        const original_value = this.unmodified_user_copy[key]
 
         // Only deal with non-nested stuff
         if(this.isObject(current_value)) return acc

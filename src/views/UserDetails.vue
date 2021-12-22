@@ -334,7 +334,7 @@ export default {
 
       let formData = new FormData()
       formData.append('image', event.target.files[0])
-      const url = `${process.env.VUE_APP_IMAGE_MANAGER_API_URL}/image`
+      const url = `${process.env.VUE_APP_IMAGE_MANAGER_API_URL}/images`
       const options = {
         headers: {'Content-Type': 'multipart/form-data' }
       }

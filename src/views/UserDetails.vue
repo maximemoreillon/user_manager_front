@@ -332,18 +332,15 @@ export default {
 
     file_upload (event) {
 
-      let formData = new FormData()
+      const formData = new FormData()
       formData.append('image', event.target.files[0])
       const url = `${process.env.VUE_APP_IMAGE_MANAGER_API_URL}/images`
-      const options = {
-        headers: {'Content-Type': 'multipart/form-data' }
-      }
+      const options = { headers: {'Content-Type': 'multipart/form-data' } }
       this.axios.post(url, formData, options)
-      .then(response => {
-        const image_id = response.data._id
+      .then( ({data}) => {
+        const image_id = data._id
         const src = `${process.env.VUE_APP_IMAGE_MANAGER_API_URL}/images/${image_id}`
-        this.user.avatar_src = src
-
+        this.$set(this.user, 'avatar_src', src)
       })
       .catch(error => {
 

@@ -46,11 +46,16 @@
             <input type="text" v-model="user.last_name">
           </td>
         </tr>
-
         <tr>
           <td>Display name</td>
           <td>
             <input type="text" v-model="user.display_name">
+          </td>
+        </tr>
+        <tr>
+          <td>Website</td>
+          <td>
+            <input type="text" v-model="user.website">
           </td>
         </tr>
         <tr>

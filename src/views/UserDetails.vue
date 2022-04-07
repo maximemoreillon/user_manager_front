@@ -28,9 +28,7 @@
 
         <tr>
           <td>E-mail address</td>
-          <td>
-            <input type="email" v-model="user.email_address">
-          </td>
+          <td>{{user.email_address}}</td>
         </tr>
 
 

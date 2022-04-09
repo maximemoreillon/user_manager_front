@@ -87,11 +87,10 @@ export default {
     get_users(){
       this.loading = true
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/v2/users`
-      const options = {params: {start_index: this.users.length}}
-      this.axios.get(url, options)
+      this.axios.get(url)
       .then(({data}) => {
         this.user_count = data.count
-        this.users = [...this.users, ...data.users]
+        this.users = data.users
        })
       .catch( error => console.log(error))
       .finally( () => { this.loading = false })
@@ -107,7 +106,7 @@ export default {
       if(this.search === '') return this.users
       return this.users.filter(u => {
         const username_lower = u.username.toLowerCase()
-        const display_name_lower = u.properties.display_name.toLowerCase()
+        const display_name_lower = u.display_name.toLowerCase()
 
         return username_lower.includes(this.search.toLowerCase())
           || display_name_lower.includes(this.search.toLowerCase())

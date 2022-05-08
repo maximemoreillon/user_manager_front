@@ -12,6 +12,7 @@ variables:
   K8S_INGRESS_HOST: vuetify.users.maximemoreillon.com
 
 # Needed for Docker in docker build
+image: moreillon/ci-dind
 services:
   - name: docker:19.03.12-dind
 

@@ -1,11 +1,15 @@
 stages:
   - build
+  - deploy
 
 variables:
   APPLICATION_NAME: user-manager-mongoose-front
+
   CONTAINER_REGISTRY: ${DOCKER_HUB_USERNAME}
   CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
+
+  K8S_INGRESS_HOST: vuetify.users.maximemoreillon.com
 
 # Needed for Docker in docker build
 services:
@@ -17,9 +21,10 @@ build:
     - dind
   only:
     - master
-  script:
+  before_script:
     # Docker hub login
     - echo "${DOCKER_HUB_PASSWORD}" | docker login --username ${DOCKER_HUB_USERNAME} --password-stdin
+  script:
     # Building the container image
     - docker build -t ${CONTAINER_IMAGE} .
     - docker tag ${CONTAINER_IMAGE} ${CONTAINER_IMAGE_TAGGED}
@@ -29,3 +34,15 @@ build:
     # Cleanup
     - docker image rm ${CONTAINER_IMAGE}
     - docker image rm ${CONTAINER_IMAGE_TAGGED}
+
+deploy:
+  stage: deploy
+  tags:
+    - dind
+  script:
+    # Apply manifest
+    - envsubst < kubernetes_manifest.yml | kubectl apply -f -
+  environment:
+    name: production
+    kubernetes:
+      namespace: ${KUBERNETES_NAMESPACE}

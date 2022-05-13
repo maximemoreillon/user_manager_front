@@ -1,38 +1,57 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import Users from '../views/Users.vue'
+import User from '../views/User.vue'
+import Info from '../views/Info.vue'
+
 Vue.use(VueRouter)
 
 const routes = [
+
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('../views/About.vue'),
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/Login.vue'),
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/views/Register.vue'),
   },
   {
     path: '/users',
-    name: 'user_list',
-    component: () => import('../views/UserList.vue'),
-    alias: '/user_list',
-  },
-  {
-    path: '/users/create',
-    name: 'create_user',
-    component: () => import('../views/CreateUser.vue'),
-    alias: '/create_user',
+    name: 'users',
+    component: Users,
   },
   {
     path: '/users/:user_id',
-    name: 'user_details',
-    component: () => import('../views/UserDetails.vue'),
-    alias: '/user',
+    name: 'user',
+    component: User,
   },
-
-
-  // Redirect all the remaining to the user's profile page
   {
-    path: '*',
-    redirect: { name :'user_details', params: {user_id: 'self'}}
+    path: '/password_update',
+    name: 'password_update',
+    component: () => import('@/views/PasswordUpdate.vue'),
+  },
+  {
+    path: '/password_reset',
+    name: 'password_reset',
+    component: () => import('@/views/PasswordResetRequest.vue'),
+  },
+  {
+    path: '/activate',
+    name: 'activate',
+    component: () => import('@/views/Activate.vue'),
+  },
+  {
+    path: '/info',
+    name: 'info',
+    component: Info,
+  },
+  {
+    // will match everything
+    path: '*', redirect: {name :'user', params: {user_id: 'self'}}
   }
 
 ]

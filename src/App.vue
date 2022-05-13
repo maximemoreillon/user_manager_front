@@ -1,108 +1,158 @@
 <template>
-  <div id="app">
+  <v-app>
 
-    <AppTemplate
-      :options="options"
-      @user="$store.commit('set_current_user', $event)">
+    <v-app-bar
+      app
+      color="#444444"
+      dark
+      clipped-left>
 
-      <template v-slot:nav>
-        <router-link :to="{ name: 'user_details', params: {user_id: 'self'} }">
-          <AccountIcon/>
-          <span>My profile</span>
-        </router-link>
+      <v-app-bar-nav-icon
+        v-if="$store.state.current_user"
+        @click="drawer = !drawer" />
 
-        <router-link to="/user_list">
-          <FormatListBulletedIcon/>
-          <span>User list</span>
-        </router-link>
 
-        <router-link
-          to="/create_user"
-          v-if="current_user_is_admin">
-          <AccountPlusIcon/>
-          <span>Create user</span>
-        </router-link>
+      <v-img
+        alt="Logo"
+        class="shrink mr-2 rotating_logo"
+        contain
+        src="@/assets/logo.png"
+        transition="scale-transition"
+        width="40" />
 
-        <router-link
-          to="/about">
-          <InformationOutlinetIcon/>
-          <span>About</span>
-        </router-link>
+      <v-toolbar-title>Account manager</v-toolbar-title>
 
-      </template>
+      <v-spacer />
 
-    </AppTemplate>
+      <v-btn
+        v-if="$store.state.current_user"
+        icon
+        @click="logout()">
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
 
-  </div>
+    </v-app-bar>
+
+    <v-navigation-drawer
+      clipped
+      app
+      v-if="$store.state.current_user"
+      v-model="drawer">
+
+      <v-list
+        dense
+        nav >
+
+
+
+        <v-list-item
+          v-for="(item, index) in nav"
+          :key="`nav_item_${index}`"
+          :to="item.to"
+          exact>
+          <v-list-item-icon>
+            <v-icon>{{item.icon}}</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-content>
+            <v-list-item-title>{{item.title}}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <template v-if="current_user_is_admin">
+          <v-subheader>Admin</v-subheader>
+
+          <v-list-item
+            v-for="(item, index) in nav_admin"
+            :key="`nav_item_admin_${index}`"
+            :to="item.to"
+            exact>
+            <v-list-item-icon>
+              <v-icon>{{item.icon}}</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>{{item.title}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+
+
+
+
+      </v-list>
+
+    </v-navigation-drawer>
+
+
+
+
+    <!-- v-container inside main This looks correct -->
+    <!-- v-container is here for padding mainly -->
+    <v-main class="grey lighten-4">
+      <v-container fluid>
+        <router-view/>
+      </v-container>
+    </v-main>
+
+    <v-footer>
+      <v-col
+        class="text-center"
+        cols="12" >
+        User manager - Maxime Moreillon
+      </v-col>
+
+
+    </v-footer>
+
+  </v-app>
 </template>
 
 <script>
 
-import AppTemplate from '@moreillon/vue_application_template'
-import {authentication} from '@/mixins/authentication.js'
-
-import AccountIcon from 'vue-material-design-icons/Account.vue'
-import AccountPlusIcon from 'vue-material-design-icons/AccountPlus.vue'
-
-import FormatListBulletedIcon from 'vue-material-design-icons/FormatListBulleted.vue'
-
-import InformationOutlinetIcon from 'vue-material-design-icons/InformationOutline.vue'
-
+import CurrentUser from '@/mixins/CurrentUser.js'
 
 export default {
-  name: 'app',
-  components: {
-    AppTemplate,
-    AccountIcon,
-    InformationOutlinetIcon,
-    FormatListBulletedIcon,
-    AccountPlusIcon
-  },
+  name: 'App',
   mixins: [
-    authentication,
+    CurrentUser
   ],
-  data(){
-    return {
-      options: {
-        title: 'User manager',
-        authenticate: true,
-        login_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/auth/login`,
-        identification_url: `${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`
-      }
+  data: () => ({
+    drawer: null,
+    nav: [
+      {title: 'Profile', icon: 'mdi-account', to: {name: 'user', params: {user_id: 'self'}}},
+      {title: 'Info', icon: 'mdi-information-outline', to: {name: 'info', params: {}}},
+    ],
+    nav_admin: [
+      {title: 'Users', icon: 'mdi-account-multiple', to: {name: 'users', params: {}}},
+    ],
+  }),
+  methods: {
+    logout(){
+
+      delete this.axios.defaults.headers.common['Authorization']
+      this.$cookie.delete('token')
+      this.$router.push({name: 'login'})
     }
+  },
+  computed: {
+
   }
-}
+
+};
 </script>
 
-
 <style>
-main > * {
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+.rotating_logo {
+  animation-name: rotating_logo;
+  animation-duration: 60s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+@keyframes rotating_logo {
+  from {transform: rotate(0deg);}
+  to {transform: rotate(360deg);}
 }
 
-table input[type="text"],
-table input[type="password"],
-table input[type="email"] {
-  width: 100%;
-}
-
-tr:not(:last-child){
-  border-bottom: 1px solid #dddddd;
-}
-
-th, td {
-  padding: 0.25em;
-}
-
-.error {
-  color: #c00000;
-}
 </style>

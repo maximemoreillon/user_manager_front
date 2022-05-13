@@ -1,6 +1,7 @@
 # User Manager GUI
 
-Front end for the user manager API
+GUI for the user management microservice.
+This version does not use Vuetify
 
 ## Environment variables
 

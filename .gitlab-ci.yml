@@ -38,6 +38,8 @@ build:
 
 deploy:
   stage: deploy
+  only:
+    - master
   tags:
     - dind
   script:

@@ -3,13 +3,13 @@ stages:
   - deploy
 
 variables:
-  APPLICATION_NAME: user-manager-mongoose-front
+  APPLICATION_NAME: user-manager-front
 
   CONTAINER_REGISTRY: ${DOCKER_HUB_USERNAME}
   CONTAINER_IMAGE: ${CONTAINER_REGISTRY}/${APPLICATION_NAME}
   CONTAINER_IMAGE_TAGGED: ${CONTAINER_IMAGE}:${CI_COMMIT_SHORT_SHA}
 
-  K8S_INGRESS_HOST: vuetify.users.maximemoreillon.com
+  K8S_INGRESS_HOST: users.maximemoreillon.com
 
 # Needed for Docker in docker build
 image: moreillon/ci-dind

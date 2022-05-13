@@ -1,4 +1,4 @@
-# User manager front-end (Mongoose version)
+# User manager GUI
 
 ## Environment variables
 

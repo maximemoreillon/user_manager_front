@@ -43,7 +43,10 @@
         <!-- Avatar -->
         <template v-slot:item.avatar="{ item }">
           <v-avatar size="24">
-            <img :src="item.avatar" alt="avatar" v-if="item.avatar">
+            <img 
+              :src="item.avatar_src" 
+              alt="avatar" 
+              v-if="item.avatar_src">
             <v-icon v-else>mdi-account-circle</v-icon>
           </v-avatar>
         </template>

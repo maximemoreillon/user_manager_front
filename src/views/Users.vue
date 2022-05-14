@@ -48,6 +48,10 @@
           </v-avatar>
         </template>
 
+        <template v-slot:item.last_login="{ item }">
+          {{format_date(item.last_login)}}
+        </template>
+
         <!-- Boolean properties -->
         <template v-slot:item.isAdmin="{ item }">
           <v-icon v-if="item.isAdmin">mdi-check</v-icon>
@@ -86,11 +90,13 @@
 <script>
 // import UserCreateDialog from '@/components/UserCreateDialog.vue'
 import CurrentUser from '@/mixins/CurrentUser.js'
+import dateUtils from '@/mixins/dateUtils.js'
 
 export default {
   name: 'Users',
   mixins: [
-    CurrentUser
+    CurrentUser,
+    dateUtils,
   ],
   components: {
     // UserCreateDialog
@@ -109,6 +115,7 @@ export default {
         {text: 'Administrator', value:'isAdmin'},
         {text: 'Activated', value:'activated'},
         {text: 'Locked', value:'locked'},
+        {text: 'Last login', value:'last_login'},
       ],
       loading: false,
       search: '',

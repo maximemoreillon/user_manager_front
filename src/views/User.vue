@@ -42,7 +42,14 @@
         <v-list-item>
           <v-list-item-content>
             <div class="caption">Creation date</div>
-            <div>{{new Date(user.creation_date).toString()}}</div>
+            <div>{{format_date(user.creation_date)}}</div>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item>
+          <v-list-item-content>
+            <div class="caption">Last login</div>
+            <div>{{format_date(user.last_login)}}</div>
           </v-list-item-content>
         </v-list-item>
 
@@ -154,11 +161,13 @@
 <script>
 import PasswordUpdateDialog from '@/components/PasswordUpdateDialog.vue'
 import CurrentUser from '@/mixins/CurrentUser.js'
+import dateUtils from '@/mixins/dateUtils.js'
 
 export default {
   name: 'User',
   mixins: [
-    CurrentUser
+    CurrentUser,
+    dateUtils
   ],
   components: {
     PasswordUpdateDialog,
@@ -240,6 +249,7 @@ export default {
       this.snack.text = message
       this.snack.show = true
     },
+    
 
 
   },

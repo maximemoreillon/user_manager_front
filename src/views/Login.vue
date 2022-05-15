@@ -46,16 +46,19 @@
         </v-form>
       </v-card-text>
 
-      <v-card-text v-if="registration_allowed">
-        <v-row justify="center">
+
+      <v-card-text>
+        <v-row
+          v-if="registration_allowed" 
+          justify="center">
           <v-col
             class="text-center">
             No account? click <router-link :to="{ name: 'register' }">here</router-link> to create one.
           </v-col>
         </v-row>
-      </v-card-text>
-      <v-card-text>
-        <v-row justify="center">
+        <v-row
+          v-if="password_reset_possible"  
+          justify="center">
           <v-col
             class="text-center">
             Forgotten password? click <router-link :to="{ name: 'password_reset' }">here</router-link> to reset it.
@@ -96,6 +99,7 @@ export default {
   data(){
     return {
       registration_allowed: false,
+      password_reset_possible: false,
       form_valid: false,
       snackbar: false,
       snackbar_text: '',
@@ -109,6 +113,7 @@ export default {
   },
   mounted(){
     this.check_if_registration_possible()
+    this.check_if_password_reset_possible()
   },
   methods: {
     login(){
@@ -144,10 +149,19 @@ export default {
     check_if_registration_possible(){
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/`
       this.axios.get(url)
-      .then( ({data: {registration_allowed}}) => {
-        this.registration_allowed = registration_allowed
-      })
-      .catch( console.error)
+        .then( ({data: {registration_allowed}}) => {
+          this.registration_allowed = registration_allowed
+        })
+        .catch( console.error)
+    },
+    check_if_password_reset_possible(){
+      const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/`
+      this.axios.get(url)
+        .then( ({data}) => {
+          if(data.smtp) this.password_reset_possible = !!data.smtp.host
+          else this.password_reset_possible = false
+        })
+        .catch( console.error)
     }
   }
 

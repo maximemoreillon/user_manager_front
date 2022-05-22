@@ -145,13 +145,16 @@ export default {
 
     get_users(){
       this.loading = true
-      const { page, itemsPerPage } = this.options
+      const { itemsPerPage, page, sortBy, sortDesc } = this.options
 
       const url = `${process.env.VUE_APP_USER_MANAGER_API_URL}/users`
       const params = {
         skip: (page-1) * itemsPerPage,
         limit: itemsPerPage,
+        sort: sortBy[0],
+        order: sortDesc[0] ? -1 : 1,
       }
+
       this.axios.get(url, {params})
       .then( ({data}) => {
 

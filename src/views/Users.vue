@@ -3,16 +3,13 @@
 
     <v-toolbar flat>
       <v-toolbar-title>Users</v-toolbar-title>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-btn
         text
         :to="{name: 'register'}">
         <v-icon>mdi-account-plus</v-icon>
         <span class="ml-1">Create user</span>
       </v-btn>
-
-      <!-- <UserCreateDialog
-        @user_created="user_created($event)"/> -->
     </v-toolbar>
     <v-divider />
 
@@ -35,7 +32,9 @@
               v-model="search"
               append-icon="mdi-magnify"
               label="Search"
-              single-line />
+              single-line
+              @change="get_users()"
+              @click:append="get_users()"/>
 
           </v-toolbar>
         </template>
@@ -153,6 +152,7 @@ export default {
         limit: itemsPerPage,
         sort: sortBy[0],
         order: sortDesc[0] ? -1 : 1,
+        search: this.search,
       }
 
       this.axios.get(url, {params})
@@ -175,9 +175,6 @@ export default {
     row_clicked(item){
       this.$router.push({name: 'user', params: {user_id: item._id}})
     },
-    user_created(){
-      this.get_user_count()
-    }
 
   },
   computed: {

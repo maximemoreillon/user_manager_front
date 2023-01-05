@@ -4,8 +4,8 @@
       <v-toolbar-title>Users</v-toolbar-title>
       <v-spacer />
       <v-btn text :to="{ name: 'register' }">
-        <v-icon>mdi-account-plus</v-icon>
-        <span class="ml-1">Create user</span>
+        <v-icon left>mdi-account-plus</v-icon>
+        <span>Create user</span>
       </v-btn>
     </v-toolbar>
     <v-divider />
@@ -72,16 +72,13 @@
 </template>
 
 <script>
-// import UserCreateDialog from '@/components/UserCreateDialog.vue'
 import CurrentUser from "@/mixins/CurrentUser.js"
 import dateUtils from "@/mixins/dateUtils.js"
 
 export default {
   name: "Users",
   mixins: [CurrentUser, dateUtils],
-  components: {
-    // UserCreateDialog
-  },
+
   data() {
     return {
       users: [],

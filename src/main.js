@@ -34,7 +34,7 @@ router.beforeEach((to, from, next) => {
   if (token) {
     Vue.axios.defaults.headers.common["Authorization"] = `Bearer ${token}`
     Vue.axios
-      .get(`${process.env.VUE_APP_USER_MANAGER_API_URL}/users/self`)
+      .get("/users/self")
       .then(({ data }) => {
         store.commit("set_current_user", data)
         next()

@@ -31,8 +31,7 @@
               />
             </v-col>
           </v-row>
-          <v-row>
-            <v-spacer />
+          <v-row justify="center">
             <v-col cols="auto">
               <v-btn :disabled="!form_valid" :loading="loading" type="submit">
                 Set password

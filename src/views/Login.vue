@@ -25,7 +25,7 @@
             </v-col>
           </v-row>
           <v-row justify="center">
-            <v-col class="text-center">
+            <v-col cols="auto">
               <v-btn
                 type="submit"
                 :disabled="!form_valid || processing"

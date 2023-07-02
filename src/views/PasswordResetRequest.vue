@@ -18,16 +18,14 @@
                 v-model="email_address"
               />
             </v-col>
-          </v-row>
-          <v-row>
-            <v-spacer />
             <v-col cols="auto">
               <v-btn
                 :disabled="!email_address || !form_valid"
                 :loading="loading"
                 type="submit"
               >
-                Request reset
+                <v-icon left>mdi-send</v-icon>
+                <span> Send reset email </span>
               </v-btn>
             </v-col>
           </v-row>

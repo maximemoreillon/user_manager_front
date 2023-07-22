@@ -44,11 +44,11 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" text @click="clear_password_update()">
+        <v-btn color="primary" text @click="clear_password_update()">
           Cancel
         </v-btn>
         <v-btn
-          color="blue darken-1"
+          color="primary"
           text
           @click="update_pasword()"
           :disabled="!form_valid"

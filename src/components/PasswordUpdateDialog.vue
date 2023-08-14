@@ -8,12 +8,12 @@
 
     <v-card>
       <v-card-title>Password update</v-card-title>
-      <v-card-text>
-        <v-form
-          @submit.prevent="update_pasword()"
-          lazy-validation
-          v-model="form_valid"
-        >
+      <v-form
+        @submit.prevent="update_pasword()"
+        lazy-validation
+        v-model="form_valid"
+      >
+        <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12">
@@ -37,25 +37,25 @@
                 />
               </v-col>
             </v-row>
-            <v-btn type="submit" style="display: none">submit</v-btn>
           </v-container>
-        </v-form>
-      </v-card-text>
+        </v-card-text>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" text @click="clear_password_update()">
-          Cancel
-        </v-btn>
-        <v-btn
-          color="primary"
-          text
-          @click="update_pasword()"
-          :disabled="!form_valid"
-        >
-          Save
-        </v-btn>
-      </v-card-actions>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="clear_password_update()">
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            text
+            @click="update_pasword()"
+            :disabled="!form_valid"
+            type="submit"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>

@@ -67,6 +67,9 @@
           <v-list-item-content>
             <v-text-field label="Token" :value="token" />
           </v-list-item-content>
+          <v-list-item-action>
+            <v-btn @click="revokeToken()">Revoke</v-btn>
+          </v-list-item-action>
         </v-list-item>
 
         <v-list-item>
@@ -155,6 +158,7 @@ export default {
   data() {
     return {
       loading: false,
+      tokenRevoking: false,
       user: null,
       unmodified_user_copy: null,
       dialog: false,
@@ -234,6 +238,23 @@ export default {
       this.snack.text = message
       this.snack.show = true
     },
+    async revokeToken(){
+      try {
+        if (!confirm(`Revoke token?`)) return
+        this.tokenRevoking = true
+        const url = `/users/${this.user_id}/token`
+        await this.axios
+          .delete(url)
+
+        this.$router.push({name: 'login'})
+
+      } catch (error) {
+        alert('Revocation failed')
+        console.error(error)
+      } finally {
+        this.tokenRevoking = false
+      }
+    }
   },
   computed: {
     user_id() {

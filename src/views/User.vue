@@ -63,7 +63,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item v-if="user_is_current_user">
+        <v-list-item v-if="user_is_current_user || current_user_is_admin">
           <v-list-item-content>
             <v-text-field label="Token" :value="token" />
           </v-list-item-content>
@@ -116,7 +116,7 @@
       </v-list>
 
       <v-card-actions v-if="current_user_is_admin || user_is_current_user">
-        <v-spacer></v-spacer>
+        <v-spacer />
         <v-btn
           color="#444"
           text

@@ -69,7 +69,7 @@
           </v-list-item-content>
           <v-list-item-action>
             <v-btn @click="revokeToken()" color="#c00000" outlined>
-              <v-icon>mdi-close</v-icon>
+              <v-icon left>mdi-close</v-icon>
               <span>Revoke</span>
             </v-btn>
           </v-list-item-action>

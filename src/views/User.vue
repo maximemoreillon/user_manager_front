@@ -76,7 +76,7 @@
           <v-list-item-content>Administrator</v-list-item-content>
           <v-list-item-action>
             <v-switch
-              :disabled="user_is_current_user || !current_user_is_admin"
+              :disabled="!current_user_is_admin"
               v-model="user.isAdmin"
             />
           </v-list-item-action>
@@ -86,7 +86,7 @@
           <v-list-item-content>Activated</v-list-item-content>
           <v-list-item-action>
             <v-switch
-              :disabled="user_is_current_user || !current_user_is_admin"
+              :disabled="!current_user_is_admin"
               v-model="user.activated"
             />
           </v-list-item-action>
@@ -96,7 +96,7 @@
           <v-list-item-content>Locked</v-list-item-content>
           <v-list-item-action>
             <v-switch
-              :disabled="user_is_current_user || !current_user_is_admin"
+              :disabled="!current_user_is_admin"
               v-model="user.locked"
             />
           </v-list-item-action>
@@ -238,25 +238,26 @@ export default {
       this.snack.text = message
       this.snack.show = true
     },
-    async revokeToken(){
+    async revokeToken() {
       try {
         if (!confirm(`Revoke token?`)) return
         this.tokenRevoking = true
         const url = `/users/${this.user_id}/token`
-        await this.axios
-          .delete(url)
+        await this.axios.delete(url)
 
-        this.$router.push({name: 'login'})
-
+        this.$router.push({ name: "login" })
       } catch (error) {
-        alert('Revocation failed')
+        alert("Revocation failed")
         console.error(error)
       } finally {
         this.tokenRevoking = false
       }
-    }
+    },
   },
   computed: {
+    current_user_id() {
+      return this.$store.state.current_user?._id
+    },
     user_id() {
       return this.$route.params.user_id
     },

@@ -27,12 +27,13 @@
           <v-row justify="center">
             <v-col cols="auto">
               <v-btn
+                color="primary"
                 type="submit"
                 :disabled="!form_valid || processing"
                 :loading="processing"
               >
-                <v-icon>mdi-login</v-icon>
-                <span class="">Login</span>
+                <v-icon left>mdi-login</v-icon>
+                <span>Login</span>
               </v-btn>
             </v-col>
           </v-row>

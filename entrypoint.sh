@@ -10,6 +10,9 @@ do
 
   sed -i 's|VUE_APP_USER_MANAGER_API_URL_PLACEHOLDER|'${VUE_APP_USER_MANAGER_API_URL}'|g' $file
 
+  # sed -i 's|VUE_APP_ALLOW_REGISTRATION_PLACEHOLDER|'${VUE_APP_ALLOW_REGISTRATION}'|g' $file
+
+
 done
 
 echo "Starting Nginx"
